@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام جرد المستودعات - مشابه لدفترة</title>
+    <title>نظام جرد المستودعات - متطور</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
         :root {
             --primary: #2c3e50;
@@ -48,6 +54,7 @@
             right: 0;
             padding-top: 20px;
             transition: all 0.3s ease;
+            z-index: 1000;
         }
         
         .sidebar-header {
@@ -346,6 +353,18 @@
             border: 1px solid #f5c6cb;
         }
         
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         /* التبويبات */
         .tabs {
             display: flex;
@@ -446,6 +465,82 @@
             color: #777;
         }
         
+        /* شاشة تسجيل الدخول */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .auth-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header h2 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .auth-header p {
+            color: #777;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .auth-tab.active {
+            border-bottom: 3px solid var(--secondary);
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        /* مؤشر التحميل */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         /* responsive */
         @media (max-width: 992px) {
             .sidebar {
@@ -485,11 +580,67 @@
             .user-name {
                 display: none;
             }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- شاشة المصادقة -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h2><i class="fas fa-warehouse"></i> نظام إدارة المستودعات</h2>
+                <p>سجل الدخول للوصول إلى النظام</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">تسجيل الدخول</div>
+                <div class="auth-tab" data-tab="register">إنشاء حساب</div>
+            </div>
+            
+            <div class="auth-form active" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">البريد الإلكتروني</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="أدخل بريدك الإلكتروني">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">كلمة المرور</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="أدخل كلمة المرور">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="loginBtn" style="width: 100%;">تسجيل الدخول</button>
+                </div>
+            </div>
+            
+            <div class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">الاسم الكامل</label>
+                    <input type="text" class="form-control" id="registerName" placeholder="أدخل اسمك الكامل">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">البريد الإلكتروني</label>
+                    <input type="email" class="form-control" id="registerEmail" placeholder="أدخل بريدك الإلكتروني">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">كلمة المرور</label>
+                    <input type="password" class="form-control" id="registerPassword" placeholder="أنشئ كلمة مرور قوية">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" id="registerBtn" style="width: 100%;">إنشاء حساب</button>
+                </div>
+            </div>
+            
+            <div id="authMessage" class="alert" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div class="app-container" id="appContainer" style="display: none;">
         <!-- الشريط الجانبي -->
         <div class="sidebar">
             <div class="sidebar-header">
@@ -502,7 +653,7 @@
                 <li><a href="#" data-section="transactions"><i class="fas fa-history"></i> <span>سجل الحركات</span></a></li>
                 <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> <span>التقارير</span></a></li>
                 <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> <span>الإعدادات</span></a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>تسجيل الخروج</span></a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>تسجيل الخروج</span></a></li>
             </ul>
         </div>
 
@@ -513,10 +664,14 @@
                 <h1 class="page-title"><i class="fas fa-home"></i> لوحة التحكم</h1>
                 <div class="user-menu">
                     <div class="user-info">
-                        <div class="user-avatar">م</div>
-                        <div class="user-name">محمد أحمد</div>
+                        <div class="user-avatar" id="userAvatar">م</div>
+                        <div class="user-name" id="userName">محمد أحمد</div>
                     </div>
                     <button class="btn btn-primary"><i class="fas fa-bell"></i></button>
+                    <div class="sync-status" id="syncStatus">
+                        <span>مزامنة</span>
+                        <div class="sync-indicator"></div>
+                    </div>
                 </div>
             </div>
 
@@ -770,7 +925,15 @@
                     </div>
                     <div class="form-group">
                         <button class="btn btn-success" id="saveSettings">حفظ الإعدادات</button>
-                        <button class="btn btn-danger" id="resetData">مسح جميع البيانات</button>
+                        <button class="btn btn-danger" id="exportData">تصدير البيانات</button>
+                        <button class="btn btn-warning" id="importData">استيراد البيانات</button>
+                        <input type="file" id="importFile" style="display: none;">
+                    </div>
+                    <div class="form-group">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>يتم تخزين البيانات على Firebase وتكون متاحة من أي جهاز</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -838,6 +1001,11 @@
                     <input type="number" class="form-control" id="productQuantity" min="0" value="0">
                 </div>
                 <div class="form-group">
+                    <label for="productAlert">حد التنبيه</label>
+                    <input type="number" class="form-control" id="productAlert" min="0" value="5">
+                    <small>سيتم إشعارك عندما تكون الكمية أقل من أو تساوي هذا الرقم</small>
+                </div>
+                <div class="form-group">
                     <button class="btn btn-success" id="saveProduct" style="width: 100%;">حفظ المنتج</button>
                 </div>
             </div>
@@ -845,284 +1013,553 @@
     </div>
 
     <script>
-        // كود JavaScript للتحكم في التخزين والواجهة
-        document.addEventListener('DOMContentLoaded', function() {
-            // عناصر DOM
-            const menuLinks = document.querySelectorAll('.sidebar-menu a');
-            const sectionContents = document.querySelectorAll('.section-content');
-            const pageTitle = document.querySelector('.page-title');
-            const transactionModal = document.getElementById('transactionModal');
-            const productModal = document.getElementById('productModal');
-            const showTransactionModalBtn = document.getElementById('showTransactionModal');
-            const showProductModalBtn = document.getElementById('showProductModal');
-            const closeModalBtns = document.querySelectorAll('.close-modal');
+        // تهيئة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwYrvLqM6a7z2X6Q6q3q3q3q3q3q3q3q3q3",
+            authDomain: "inventory-system-12345.firebaseapp.com",
+            projectId: "inventory-system-12345",
+            storageBucket: "inventory-system-12345.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123def456"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // بيانات التطبيق
+        let products = [];
+        let transactions = [];
+        let settings = { alertThreshold: 5 };
+        let currentUser = null;
+        
+        // عناصر DOM
+        const authContainer = document.getElementById('authContainer');
+        const appContainer = document.getElementById('appContainer');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const authMessage = document.getElementById('authMessage');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const menuLinks = document.querySelectorAll('.sidebar-menu a');
+        const sectionContents = document.querySelectorAll('.section-content');
+        const pageTitle = document.querySelector('.page-title');
+        const transactionModal = document.getElementById('transactionModal');
+        const productModal = document.getElementById('productModal');
+        const showTransactionModalBtn = document.getElementById('showTransactionModal');
+        const showProductModalBtn = document.getElementById('showProductModal');
+        const closeModalBtns = document.querySelectorAll('.close-modal');
+        const saveTransactionBtn = document.getElementById('saveTransaction');
+        const saveProductBtn = document.getElementById('saveProduct');
+        const saveSettingsBtn = document.getElementById('saveSettings');
+        const exportDataBtn = document.getElementById('exportData');
+        const importDataBtn = document.getElementById('importData');
+        const importFile = document.getElementById('importFile');
+        
+        // بيانات العناوين للأقسام
+        const sectionTitles = {
+            'dashboard': { icon: 'fa-home', title: 'لوحة التحكم' },
+            'products': { icon: 'fa-boxes', title: 'إدارة المنتجات' },
+            'inventory': { icon: 'fa-exchange-alt', title: 'حركة المستودع' },
+            'transactions': { icon: 'fa-history', title: 'سجل الحركات' },
+            'reports': { icon: 'fa-chart-bar', title: 'التقارير' },
+            'settings': { icon: 'fa-cog', title: 'الإعدادات' }
+        };
+        
+        // تبديل تبويبات المصادقة
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.getAttribute('data-tab');
+                
+                authTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                loginForm.style.display = targetTab === 'login' ? 'block' : 'none';
+                registerForm.style.display = targetTab === 'register' ? 'block' : 'none';
+            });
+        });
+        
+        // تسجيل الدخول
+        loginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             
-            // بيانات التخزين
-            let products = JSON.parse(localStorage.getItem('inventory_products')) || [];
-            let transactions = JSON.parse(localStorage.getItem('inventory_transactions')) || [];
-            let settings = JSON.parse(localStorage.getItem('inventory_settings')) || { alertThreshold: 5 };
-            
-            // بيانات العناوين للأقسام
-            const sectionTitles = {
-                'dashboard': { icon: 'fa-home', title: 'لوحة التحكم' },
-                'products': { icon: 'fa-boxes', title: 'إدارة المنتجات' },
-                'inventory': { icon: 'fa-exchange-alt', title: 'حركة المستودع' },
-                'transactions': { icon: 'fa-history', title: 'سجل الحركات' },
-                'reports': { icon: 'fa-chart-bar', title: 'التقارير' },
-                'settings': { icon: 'fa-cog', title: 'الإعدادات' }
-            };
-            
-            // تهيئة التطبيق
-            function initApp() {
-                updateDashboard();
-                updateProductsList();
-                updateTransactionsList();
-                updateInventoryList();
-                updateReports();
-                loadProductOptions();
-                loadSettings();
+            if (!email || !password) {
+                showAuthMessage('يرجى ملء جميع الحقول', 'danger');
+                return;
             }
             
-            // تحديث لوحة التحكم
-            function updateDashboard() {
-                // الإحصائيات
-                document.getElementById('totalProducts').textContent = products.length;
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                currentUser = userCredential.user;
+                showAuthMessage('تم تسجيل الدخول بنجاح', 'success');
                 
-                const totalQuantity = products.reduce((sum, product) => sum + product.quantity, 0);
-                document.getElementById('totalQuantity').textContent = totalQuantity;
+                // تحميل بيانات المستخدم
+                await loadUserData();
                 
-                const lowStockCount = products.filter(p => p.quantity <= settings.alertThreshold).length;
-                document.getElementById('lowStockCount').textContent = lowStockCount;
+                // الانتقال إلى التطبيق
+                setTimeout(() => {
+                    authContainer.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                }, 1000);
                 
-                const today = new Date().toLocaleDateString();
-                const todayTransactions = transactions.filter(t => new Date(t.date).toLocaleDateString() === today).length;
-                document.getElementById('todayTransactions').textContent = todayTransactions;
+            } catch (error) {
+                showAuthMessage('خطأ في تسجيل الدخول: ' + error.message, 'danger');
+            }
+        });
+        
+        // إنشاء حساب
+        registerBtn.addEventListener('click', async () => {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!name || !email || !password) {
+                showAuthMessage('يرجى ملء جميع الحقول', 'danger');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAuthMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'danger');
+                return;
+            }
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                currentUser = userCredential.user;
                 
-                // الحركات الحديثة
-                const recentTransactions = transactions.slice(-5).reverse();
-                const recentTransactionsList = document.getElementById('recentTransactions');
-                recentTransactionsList.innerHTML = '';
-                
-                recentTransactions.forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>#${transaction.id}</td>
-                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                        <td>${transaction.productName}</td>
-                        <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
-                        <td>${transaction.quantity}</td>
-                        <td><span class="status-badge status-active">مكتمل</span></td>
-                        <td>
-                            <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                        </td>
-                    `;
-                    recentTransactionsList.appendChild(row);
+                // حفظ معلومات المستخدم الإضافية
+                await db.collection('users').doc(currentUser.uid).set({
+                    name: name,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // المنتجات الأكثر حركة
-                const topProductsList = document.getElementById('topProducts');
-                topProductsList.innerHTML = '';
+                showAuthMessage('تم إنشاء الحساب بنجاح', 'success');
                 
-                // هنا يمكنك إضافة منطق لعرض المنتجات الأكثر حركة
-                products.slice(0, 5).forEach(product => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.name}</td>
-                        <td>${product.price} ر.س</td>
-                        <td>${product.quantity}</td>
-                        <td>0</td>
-                        <td><span class="status-badge ${product.quantity <= settings.alertThreshold ? 'status-inactive' : 'status-active'}">${product.quantity <= settings.alertThreshold ? 'منخفض' : 'متوفر'}</span></td>
-                    `;
-                    topProductsList.appendChild(row);
-                });
+                // الانتقال إلى التطبيق
+                setTimeout(() => {
+                    authContainer.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                    userName.textContent = name;
+                    userAvatar.textContent = name.charAt(0);
+                }, 1000);
                 
-                // تنبيهات المخزون
-                const stockAlerts = document.getElementById('stockAlerts');
-                stockAlerts.innerHTML = '';
+            } catch (error) {
+                showAuthMessage('خطأ في إنشاء الحساب: ' + error.message, 'danger');
+            }
+        });
+        
+        // تسجيل الخروج
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                currentUser = null;
+                products = [];
+                transactions = [];
                 
-                const lowStockProducts = products.filter(p => p.quantity <= settings.alertThreshold);
-                if (lowStockProducts.length === 0) {
-                    stockAlerts.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> لا توجد تنبيهات</div>';
-                } else {
-                    lowStockProducts.forEach(product => {
-                        const alert = document.createElement('div');
-                        alert.className = 'alert alert-danger';
-                        alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${product.name} - الكمية منخفضة (${product.quantity})`;
-                        stockAlerts.appendChild(alert);
-                    });
+                appContainer.style.display = 'none';
+                authContainer.style.display = 'flex';
+                
+            } catch (error) {
+                console.error('خطأ في تسجيل الخروج:', error);
+            }
+        });
+        
+        // عرض رسالة المصادقة
+        function showAuthMessage(message, type) {
+            authMessage.textContent = message;
+            authMessage.className = `alert alert-${type}`;
+            authMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                authMessage.style.display = 'none';
+            }, 3000);
+        }
+        
+        // تحميل بيانات المستخدم
+        async function loadUserData() {
+            if (!currentUser) return;
+            
+            try {
+                // تحميل بيانات المستخدم
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userName.textContent = userData.name;
+                    userAvatar.textContent = userData.name.charAt(0);
                 }
-            }
-            
-            // تحديث قائمة المنتجات
-            function updateProductsList() {
-                const productsList = document.getElementById('productsList');
-                productsList.innerHTML = '';
                 
-                products.forEach(product => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.name}</td>
-                        <td>${product.category || 'بدون فئة'}</td>
-                        <td>${product.price} ر.س</td>
-                        <td>${product.quantity}</td>
-                        <td><span class="status-badge ${product.quantity <= settings.alertThreshold ? 'status-inactive' : 'status-active'}">${product.quantity <= settings.alertThreshold ? 'منخفض' : 'متوفر'}</span></td>
-                        <td>
-                            <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger" data-id="${product.id}"><i class="fas fa-trash"></i></button>
-                        </td>
-                    `;
-                    productsList.appendChild(row);
+                // تحميل المنتجات
+                const productsSnapshot = await db.collection('users').doc(currentUser.uid).collection('products').get();
+                products = [];
+                productsSnapshot.forEach(doc => {
+                    products.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // إضافة مستمعي الأحداث لأزرار الحذف
-                document.querySelectorAll('.btn-danger').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const productId = this.getAttribute('data-id');
-                        deleteProduct(productId);
-                    });
+                // تحميل الحركات
+                const transactionsSnapshot = await db.collection('users').doc(currentUser.uid).collection('transactions')
+                    .orderBy('date', 'desc').get();
+                transactions = [];
+                transactionsSnapshot.forEach(doc => {
+                    transactions.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // تحميل الإعدادات
+                const settingsDoc = await db.collection('users').doc(currentUser.uid).collection('settings').doc('app').get();
+                if (settingsDoc.exists) {
+                    settings = settingsDoc.data();
+                }
+                
+                // تحديث الواجهة
+                initApp();
+                
+            } catch (error) {
+                console.error('خطأ في تحميل البيانات:', error);
+            }
+        }
+        
+        // تهيئة التطبيق
+        function initApp() {
+            updateDashboard();
+            updateProductsList();
+            updateTransactionsList();
+            updateInventoryList();
+            updateReports();
+            loadProductOptions();
+            loadSettings();
+        }
+        
+        // تحديث لوحة التحكم
+        function updateDashboard() {
+            // الإحصائيات
+            document.getElementById('totalProducts').textContent = products.length;
+            
+            const totalQuantity = products.reduce((sum, product) => sum + product.quantity, 0);
+            document.getElementById('totalQuantity').textContent = totalQuantity;
+            
+            const lowStockCount = products.filter(p => p.quantity <= (p.alertThreshold || settings.alertThreshold)).length;
+            document.getElementById('lowStockCount').textContent = lowStockCount;
+            
+            const today = new Date().toLocaleDateString();
+            const todayTransactions = transactions.filter(t => new Date(t.date).toLocaleDateString() === today).length;
+            document.getElementById('todayTransactions').textContent = todayTransactions;
+            
+            // الحركات الحديثة
+            const recentTransactions = transactions.slice(0, 5);
+            const recentTransactionsList = document.getElementById('recentTransactions');
+            recentTransactionsList.innerHTML = '';
+            
+            recentTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${transaction.id}</td>
+                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                    <td>${transaction.productName}</td>
+                    <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
+                    <td>${transaction.quantity}</td>
+                    <td><span class="status-badge status-active">مكتمل</span></td>
+                    <td>
+                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                recentTransactionsList.appendChild(row);
+            });
+            
+            // المنتجات الأكثر حركة
+            const topProductsList = document.getElementById('topProducts');
+            topProductsList.innerHTML = '';
+            
+            // هنا يمكنك إضافة منطق لعرض المنتجات الأكثر حركة
+            products.slice(0, 5).forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.price} ر.س</td>
+                    <td>${product.quantity}</td>
+                    <td>0</td>
+                    <td><span class="status-badge ${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'status-inactive' : 'status-active'}">${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'منخفض' : 'متوفر'}</span></td>
+                `;
+                topProductsList.appendChild(row);
+            });
+            
+            // تنبيهات المخزون
+            const stockAlerts = document.getElementById('stockAlerts');
+            stockAlerts.innerHTML = '';
+            
+            const lowStockProducts = products.filter(p => p.quantity <= (p.alertThreshold || settings.alertThreshold));
+            if (lowStockProducts.length === 0) {
+                stockAlerts.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> لا توجد تنبيهات</div>';
+            } else {
+                lowStockProducts.forEach(product => {
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-danger';
+                    alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${product.name} - الكمية منخفضة (${product.quantity})`;
+                    stockAlerts.appendChild(alert);
                 });
             }
+        }
+        
+        // تحديث قائمة المنتجات
+        function updateProductsList() {
+            const productsList = document.getElementById('productsList');
+            productsList.innerHTML = '';
             
-            // تحديث قائمة حركات المستودع
-            function updateInventoryList() {
-                const inventoryList = document.getElementById('inventoryList');
-                inventoryList.innerHTML = '';
-                
-                transactions.slice().reverse().forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>#${transaction.id}</td>
-                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                        <td>${transaction.productName}</td>
-                        <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
-                        <td>${transaction.quantity}</td>
-                        <td><span class="status-badge status-active">مكتمل</span></td>
-                        <td>
-                            <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                        </td>
-                    `;
-                    inventoryList.appendChild(row);
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.category || 'بدون فئة'}</td>
+                    <td>${product.price} ر.س</td>
+                    <td>${product.quantity}</td>
+                    <td><span class="status-badge ${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'status-inactive' : 'status-active'}">${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'منخفض' : 'متوفر'}</span></td>
+                    <td>
+                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger" data-id="${product.id}"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                productsList.appendChild(row);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار الحذف
+            document.querySelectorAll('.btn-danger').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    deleteProduct(productId);
                 });
-            }
+            });
+        }
+        
+        // تحديث قائمة حركات المستودع
+        function updateInventoryList() {
+            const inventoryList = document.getElementById('inventoryList');
+            inventoryList.innerHTML = '';
             
-            // تحديث سجل الحركات
-            function updateTransactionsList() {
-                const transactionsList = document.getElementById('transactionsList');
-                transactionsList.innerHTML = '';
-                
-                transactions.slice().reverse().forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>#${transaction.id}</td>
-                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                        <td>${transaction.productName}</td>
-                        <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
-                        <td>${transaction.quantity}</td>
-                        <td><span class="status-badge status-active">مكتمل</span></td>
-                    `;
-                    transactionsList.appendChild(row);
-                });
-            }
+            transactions.slice(0, 10).forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${transaction.id}</td>
+                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                    <td>${transaction.productName}</td>
+                    <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
+                    <td>${transaction.quantity}</td>
+                    <td><span class="status-badge status-active">مكتمل</span></td>
+                    <td>
+                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                inventoryList.appendChild(row);
+            });
+        }
+        
+        // تحديث سجل الحركات
+        function updateTransactionsList() {
+            const transactionsList = document.getElementById('transactionsList');
+            transactionsList.innerHTML = '';
             
-            // تحديث التقارير
-            function updateReports() {
-                const totalIn = transactions
-                    .filter(t => t.type === 'in')
-                    .reduce((sum, t) => sum + t.quantity, 0);
-                
-                const totalOut = transactions
-                    .filter(t => t.type === 'out')
-                    .reduce((sum, t) => sum + t.quantity, 0);
-                
-                document.getElementById('totalIn').textContent = totalIn;
-                document.getElementById('totalOut').textContent = totalOut;
-                
-                // هنا يمكنك إضافة المزيد من منطق التقارير
-            }
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${transaction.id}</td>
+                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                    <td>${transaction.productName}</td>
+                    <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
+                    <td>${transaction.quantity}</td>
+                    <td><span class="status-badge status-active">مكتمل</span></td>
+                `;
+                transactionsList.appendChild(row);
+            });
+        }
+        
+        // تحديث التقارير
+        function updateReports() {
+            const totalIn = transactions
+                .filter(t => t.type === 'in')
+                .reduce((sum, t) => sum + t.quantity, 0);
             
-            // تحميل خيارات المنتجات في النماذج
-            function loadProductOptions() {
-                const productSelect = document.getElementById('transactionProduct');
-                productSelect.innerHTML = '<option value="">اختر المنتج</option>';
-                
-                products.forEach(product => {
-                    const option = document.createElement('option');
-                    option.value = product.id;
-                    option.textContent = product.name;
-                    productSelect.appendChild(option);
-                });
-            }
+            const totalOut = transactions
+                .filter(t => t.type === 'out')
+                .reduce((sum, t) => sum + t.quantity, 0);
             
-            // تحميل الإعدادات
-            function loadSettings() {
-                document.getElementById('alertThreshold').value = settings.alertThreshold;
-            }
+            document.getElementById('totalIn').textContent = totalIn;
+            document.getElementById('totalOut').textContent = totalOut;
             
-            // حفظ الإعدادات
-            document.getElementById('saveSettings').addEventListener('click', function() {
-                settings.alertThreshold = parseInt(document.getElementById('alertThreshold').value);
-                localStorage.setItem('inventory_settings', JSON.stringify(settings));
+            // هنا يمكنك إضافة المزيد من منطق التقارير
+        }
+        
+        // تحميل خيارات المنتجات في النماذج
+        function loadProductOptions() {
+            const productSelect = document.getElementById('transactionProduct');
+            productSelect.innerHTML = '<option value="">اختر المنتج</option>';
+            
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                productSelect.appendChild(option);
+            });
+        }
+        
+        // تحميل الإعدادات
+        function loadSettings() {
+            document.getElementById('alertThreshold').value = settings.alertThreshold || 5;
+        }
+        
+        // حفظ الإعدادات
+        saveSettingsBtn.addEventListener('click', async function() {
+            if (!currentUser) return;
+            
+            settings.alertThreshold = parseInt(document.getElementById('alertThreshold').value);
+            
+            try {
+                await db.collection('users').doc(currentUser.uid).collection('settings').doc('app').set(settings);
                 alert('تم حفظ الإعدادات بنجاح');
                 updateDashboard();
-            });
+            } catch (error) {
+                console.error('خطأ في حفظ الإعدادات:', error);
+                alert('حدث خطأ أثناء حفظ الإعدادات');
+            }
+        });
+        
+        // تصدير البيانات
+        exportDataBtn.addEventListener('click', function() {
+            const data = {
+                products: products,
+                transactions: transactions,
+                settings: settings,
+                exportedAt: new Date().toISOString()
+            };
             
-            // مسح جميع البيانات
-            document.getElementById('resetData').addEventListener('click', function() {
-                if (confirm('هل أنت متأكد من أنك تريد مسح جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.')) {
-                    localStorage.removeItem('inventory_products');
-                    localStorage.removeItem('inventory_transactions');
-                    products = [];
-                    transactions = [];
-                    initApp();
-                    alert('تم مسح جميع البيانات');
-                }
-            });
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            // حفظ منتج جديد
-            document.getElementById('saveProduct').addEventListener('click', function() {
-                const name = document.getElementById('productName').value;
-                const category = document.getElementById('productCategory').value;
-                const price = parseFloat(document.getElementById('productPrice').value);
-                const quantity = parseInt(document.getElementById('productQuantity').value);
-                
-                if (!name || !price) {
-                    alert('يرجى ملء جميع الحقول المطلوبة');
-                    return;
+            const exportFileDefaultName = `inventory_backup_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        });
+        
+        // استيراد البيانات
+        importDataBtn.addEventListener('click', function() {
+            importFile.click();
+        });
+        
+        importFile.addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.products && data.transactions) {
+                        // حفظ البيانات في Firebase
+                        const batch = db.batch();
+                        
+                        // حفظ المنتجات
+                        data.products.forEach(product => {
+                            const productRef = db.collection('users').doc(currentUser.uid).collection('products').doc(product.id);
+                            batch.set(productRef, product);
+                        });
+                        
+                        // حفظ الحركات
+                        data.transactions.forEach(transaction => {
+                            const transactionRef = db.collection('users').doc(currentUser.uid).collection('transactions').doc(transaction.id);
+                            batch.set(transactionRef, transaction);
+                        });
+                        
+                        // حفظ الإعدادات إذا كانت موجودة
+                        if (data.settings) {
+                            const settingsRef = db.collection('users').doc(currentUser.uid).collection('settings').doc('app');
+                            batch.set(settingsRef, data.settings);
+                        }
+                        
+                        await batch.commit();
+                        
+                        // إعادة تحميل البيانات
+                        await loadUserData();
+                        
+                        alert('تم استيراد البيانات بنجاح');
+                    } else {
+                        alert('ملف غير صالح');
+                    }
+                } catch (error) {
+                    console.error('خطأ في استيراد البيانات:', error);
+                    alert('حدث خطأ أثناء استيراد البيانات');
                 }
-                
+            };
+            reader.readAsText(file);
+        });
+        
+        // حفظ منتج جديد
+        saveProductBtn.addEventListener('click', async function() {
+            if (!currentUser) return;
+            
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            const alertThreshold = parseInt(document.getElementById('productAlert').value);
+            
+            if (!name || !price) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            try {
                 const newProduct = {
-                    id: Date.now(),
                     name,
                     category,
                     price,
-                    quantity
+                    quantity,
+                    alertThreshold,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                products.push(newProduct);
-                localStorage.setItem('inventory_products', JSON.stringify(products));
+                const docRef = await db.collection('users').doc(currentUser.uid).collection('products').add(newProduct);
+                
+                // إضافة المعرف إلى المنتج
+                await db.collection('users').doc(currentUser.uid).collection('products').doc(docRef.id).update({
+                    id: docRef.id
+                });
                 
                 productModal.style.display = 'none';
                 alert('تم إضافة المنتج بنجاح');
                 
-                updateDashboard();
-                updateProductsList();
-                loadProductOptions();
-            });
+                // إعادة تحميل البيانات
+                await loadUserData();
+                
+            } catch (error) {
+                console.error('خطأ في إضافة المنتج:', error);
+                alert('حدث خطأ أثناء إضافة المنتج');
+            }
+        });
+        
+        // حفظ حركة جديدة
+        saveTransactionBtn.addEventListener('click', async function() {
+            if (!currentUser) return;
             
-            // حفظ حركة جديدة
-            document.getElementById('saveTransaction').addEventListener('click', function() {
-                const type = document.getElementById('transactionType').value;
-                const productId = document.getElementById('transactionProduct').value;
-                const quantity = parseInt(document.getElementById('transactionQuantity').value);
-                const notes = document.getElementById('transactionNotes').value;
-                
-                if (!productId || !quantity) {
-                    alert('يرجى ملء جميع الحقول المطلوبة');
-                    return;
-                }
-                
-                const product = products.find(p => p.id == productId);
+            const type = document.getElementById('transactionType').value;
+            const productId = document.getElementById('transactionProduct').value;
+            const quantity = parseInt(document.getElementById('transactionQuantity').value);
+            const notes = document.getElementById('transactionNotes').value;
+            
+            if (!productId || !quantity) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            try {
+                const product = products.find(p => p.id === productId);
                 if (!product) {
                     alert('المنتج المحدد غير موجود');
                     return;
@@ -1140,101 +1577,123 @@
                     product.quantity -= quantity;
                 }
                 
+                // تحديث المنتج في Firebase
+                await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).update({
+                    quantity: product.quantity
+                });
+                
                 // إضافة الحركة
                 const newTransaction = {
-                    id: Date.now(),
-                    date: new Date().toISOString(),
                     productId: product.id,
                     productName: product.name,
                     type,
                     quantity,
-                    notes
+                    notes,
+                    date: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                transactions.push(newTransaction);
-                localStorage.setItem('inventory_products', JSON.stringify(products));
-                localStorage.setItem('inventory_transactions', JSON.stringify(transactions));
+                const docRef = await db.collection('users').doc(currentUser.uid).collection('transactions').add(newTransaction);
+                
+                // إضافة المعرف إلى الحركة
+                await db.collection('users').doc(currentUser.uid).collection('transactions').doc(docRef.id).update({
+                    id: docRef.id
+                });
                 
                 transactionModal.style.display = 'none';
                 alert('تم إضافة الحركة بنجاح');
                 
-                updateDashboard();
-                updateProductsList();
-                updateInventoryList();
-                updateTransactionsList();
-                updateReports();
-            });
+                // إعادة تحميل البيانات
+                await loadUserData();
+                
+            } catch (error) {
+                console.error('خطأ في إضافة الحركة:', error);
+                alert('حدث خطأ أثناء إضافة الحركة');
+            }
+        });
+        
+        // حذف منتج
+        async function deleteProduct(productId) {
+            if (!currentUser) return;
             
-            // حذف منتج
-            function deleteProduct(productId) {
-                if (confirm('هل أنت متأكد من أنك تريد حذف هذا المنتج؟')) {
-                    products = products.filter(p => p.id != productId);
-                    localStorage.setItem('inventory_products', JSON.stringify(products));
-                    
+            if (confirm('هل أنت متأكد من أنك تريد حذف هذا المنتج؟')) {
+                try {
+                    await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).delete();
                     alert('تم حذف المنتج بنجاح');
-                    updateDashboard();
-                    updateProductsList();
-                    loadProductOptions();
+                    
+                    // إعادة تحميل البيانات
+                    await loadUserData();
+                    
+                } catch (error) {
+                    console.error('خطأ في حذف المنتج:', error);
+                    alert('حدث خطأ أثناء حذف المنتج');
                 }
             }
-            
-            // تغيير القسم النشط عند النقر على رابط القائمة
-            menuLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
+        }
+        
+        // تغيير القسم النشط عند النقر على رابط القائمة
+        menuLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // إذا كان الرابط ليس لتسجيل الخروج
+                if (!this.querySelector('.fa-sign-out-alt')) {
+                    const targetSection = this.getAttribute('data-section');
                     
-                    // إذا كان الرابط ليس لتسجيل الخروج
-                    if (!this.querySelector('.fa-sign-out-alt')) {
-                        const targetSection = this.getAttribute('data-section');
-                        
-                        // إزالة النشاط من جميع الروابط
-                        menuLinks.forEach(link => link.classList.remove('active'));
-                        // إضافة النشاط للرابط الحالي
-                        this.classList.add('active');
-                        
-                        // إخفاء جميع الأقسام
-                        sectionContents.forEach(section => section.classList.remove('active'));
-                        // إظهار القسم المحدد
-                        document.getElementById(targetSection).classList.add('active');
-                        
-                        // تحديث عنوان الصفحة
-                        if (sectionTitles[targetSection]) {
-                            const { icon, title } = sectionTitles[targetSection];
-                            pageTitle.innerHTML = `<i class="fas ${icon}"></i> ${title}`;
-                        }
+                    // إزالة النشاط من جميع الروابط
+                    menuLinks.forEach(link => link.classList.remove('active'));
+                    // إضافة النشاط للرابط الحالي
+                    this.classList.add('active');
+                    
+                    // إخفاء جميع الأقسام
+                    sectionContents.forEach(section => section.classList.remove('active'));
+                    // إظهار القسم المحدد
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // تحديث عنوان الصفحة
+                    if (sectionTitles[targetSection]) {
+                        const { icon, title } = sectionTitles[targetSection];
+                        pageTitle.innerHTML = `<i class="fas ${icon}"></i> ${title}`;
                     }
-                });
-            });
-            
-            // فتح النماذج
-            showTransactionModalBtn.addEventListener('click', function() {
-                transactionModal.style.display = 'flex';
-            });
-            
-            showProductModalBtn.addEventListener('click', function() {
-                productModal.style.display = 'flex';
-            });
-            
-            // إغلاق النماذج
-            closeModalBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    transactionModal.style.display = 'none';
-                    productModal.style.display = 'none';
-                });
-            });
-            
-            // إغلاق النماذج عند النقر خارج المحتوى
-            window.addEventListener('click', function(e) {
-                if (e.target === transactionModal) {
-                    transactionModal.style.display = 'none';
-                }
-                if (e.target === productModal) {
-                    productModal.style.display = 'none';
                 }
             });
-            
-            // تهيئة التطبيق
-            initApp();
+        });
+        
+        // فتح النماذج
+        showTransactionModalBtn.addEventListener('click', function() {
+            transactionModal.style.display = 'flex';
+        });
+        
+        showProductModalBtn.addEventListener('click', function() {
+            productModal.style.display = 'flex';
+        });
+        
+        // إغلاق النماذج
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                transactionModal.style.display = 'none';
+                productModal.style.display = 'none';
+            });
+        });
+        
+        // إغلاق النماذج عند النقر خارج المحتوى
+        window.addEventListener('click', function(e) {
+            if (e.target === transactionModal) {
+                transactionModal.style.display = 'none';
+            }
+            if (e.target === productModal) {
+                productModal.style.display = 'none';
+            }
+        });
+        
+        // الاستماع لتغييرات حالة المصادقة
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                loadUserData();
+            } else {
+                authContainer.style.display = 'flex';
+                appContainer.style.display = 'none';
+            }
         });
     </script>
 </body>
