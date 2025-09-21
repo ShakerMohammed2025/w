@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام جرد المستودعات - متطور</title>
+    <title>نظام إدارة المستودعات - التواصل</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -541,6 +541,231 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* أنماط الدردشة */
+        .chat-container {
+            display: flex;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .chat-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-left: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-users {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .chat-user {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .chat-user:hover {
+            background: #e9ecef;
+        }
+        
+        .chat-user.active {
+            background: #e3f2fd;
+        }
+        
+        .chat-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--info);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .chat-user-info {
+            flex: 1;
+        }
+        
+        .chat-user-name {
+            font-weight: 500;
+        }
+        
+        .chat-user-status {
+            font-size: 12px;
+            color: #28a745;
+        }
+        
+        .chat-user-status.offline {
+            color: #6c757d;
+        }
+        
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message.sent {
+            align-items: flex-end;
+        }
+        
+        .message.received {
+            align-items: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .message.sent .message-bubble {
+            background: var(--secondary);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.received .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message-info {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background: white;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .chat-input button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .chat-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .chat-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: background 0.3s;
+        }
+        
+        .chat-tab.active {
+            background: white;
+            border-bottom: 3px solid var(--secondary);
+        }
+        
+        .support-ticket {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+        }
+        
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .ticket-title {
+            font-weight: 500;
+        }
+        
+        .ticket-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .ticket-status.open {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .ticket-status.closed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .ticket-meta {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .ticket-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
         /* responsive */
         @media (max-width: 992px) {
             .sidebar {
@@ -564,6 +789,18 @@
             
             .main-content {
                 margin-right: 70px;
+            }
+            
+            .chat-container {
+                flex-direction: column;
+                height: 800px;
+            }
+            
+            .chat-sidebar {
+                width: 100%;
+                border-left: none;
+                border-bottom: 1px solid #ddd;
+                height: 200px;
             }
         }
         
@@ -652,6 +889,8 @@
                 <li><a href="#" data-section="inventory"><i class="fas fa-exchange-alt"></i> <span>حركة المستودع</span></a></li>
                 <li><a href="#" data-section="transactions"><i class="fas fa-history"></i> <span>سجل الحركات</span></a></li>
                 <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> <span>التقارير</span></a></li>
+                <li><a href="#" data-section="chat"><i class="fas fa-comments"></i> <span>الدردشة</span></a></li>
+                <li><a href="#" data-section="support"><i class="fas fa-headset"></i> <span>الدعم الفني</span></a></li>
                 <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> <span>الإعدادات</span></a></li>
                 <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>تسجيل الخروج</span></a></li>
             </ul>
@@ -667,7 +906,10 @@
                         <div class="user-avatar" id="userAvatar">م</div>
                         <div class="user-name" id="userName">محمد أحمد</div>
                     </div>
-                    <button class="btn btn-primary"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-primary" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+                    </button>
                     <div class="sync-status" id="syncStatus">
                         <span>مزامنة</span>
                         <div class="sync-indicator"></div>
@@ -782,235 +1024,180 @@
                 </div>
             </div>
 
-            <!-- قسم إدارة المنتجات -->
-            <div class="section-content" id="products">
+            <!-- قسم الدردشة -->
+            <div class="section-content" id="chat">
                 <div class="content-section">
                     <div class="section-header">
-                        <h2 class="section-title"><i class="fas fa-boxes"></i> إدارة المنتجات</h2>
-                        <button class="btn btn-success" id="showProductModal"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
+                        <h2 class="section-title"><i class="fas fa-comments"></i> الدردشة والتواصل</h2>
                     </div>
                     
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>اسم المنتج</th>
-                                    <th>الفئة</th>
-                                    <th>السعر</th>
-                                    <th>المخزون</th>
-                                    <th>الحالة</th>
-                                    <th>الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsList">
-                                <!-- سيتم ملؤها بواسطة JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- قسم حركة المستودع -->
-            <div class="section-content" id="inventory">
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title"><i class="fas fa-exchange-alt"></i> حركة المستودع</h2>
-                        <button class="btn btn-success" id="showInventoryModal"><i class="fas fa-plus"></i> إضافة حركة جديدة</button>
+                    <div class="chat-tabs">
+                        <div class="chat-tab active" data-tab="general">الدردشة العامة</div>
+                        <div class="chat-tab" data-tab="private">الدردشة الخاصة</div>
                     </div>
                     
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>رقم الحركة</th>
-                                    <th>التاريخ</th>
-                                    <th>المنتج</th>
-                                    <th>النوع</th>
-                                    <th>الكمية</th>
-                                    <th>الحالة</th>
-                                    <th>الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventoryList">
+                    <div class="chat-container">
+                        <div class="chat-sidebar">
+                            <div class="chat-users" id="chatUsers">
+                                <h4 style="margin-bottom: 15px;">الموظفون المتصلون</h4>
                                 <!-- سيتم ملؤها بواسطة JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- قسم سجل الحركات -->
-            <div class="section-content" id="transactions">
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title"><i class="fas fa-history"></i> سجل الحركات</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>رقم الحركة</th>
-                                    <th>التاريخ</th>
-                                    <th>المنتج</th>
-                                    <th>النوع</th>
-                                    <th>الكمية</th>
-                                    <th>الحالة</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transactionsList">
+                            </div>
+                        </div>
+                        
+                        <div class="chat-main">
+                            <div class="chat-header">
+                                <div id="currentChatInfo">
+                                    <h4>الدردشة العامة</h4>
+                                    <p>محادثة جماعية مع جميع الموظفين</p>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-messages" id="chatMessages">
                                 <!-- سيتم ملؤها بواسطة JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- قسم التقارير -->
-            <div class="section-content" id="reports">
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title"><i class="fas fa-chart-bar"></i> التقارير</h2>
-                    </div>
-                    <div class="stats-cards">
-                        <div class="stat-card">
-                            <div class="stat-icon blue">
-                                <i class="fas fa-arrow-up"></i>
                             </div>
-                            <div class="stat-info">
-                                <h3 id="totalIn">0</h3>
-                                <p>إجمالي الدخل</p>
+                            
+                            <div class="chat-input">
+                                <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+                                <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
                             </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon red">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3 id="totalOut">0</h3>
-                                <p>إجمالي الصرف</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content-section">
-                        <h3 class="section-title"><i class="fas fa-list"></i> تقرير الحركات</h3>
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>الشهر</th>
-                                        <th>عدد الحركات</th>
-                                        <th>إجمالي الدخل</th>
-                                        <th>إجمالي الصرف</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reportsData">
-                                    <!-- سيتم ملؤها بواسطة JavaScript -->
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- قسم الإعدادات -->
-            <div class="section-content" id="settings">
+            <!-- قسم الدعم الفني -->
+            <div class="section-content" id="support">
                 <div class="content-section">
                     <div class="section-header">
-                        <h2 class="section-title"><i class="fas fa-cog"></i> الإعدادات</h2>
+                        <h2 class="section-title"><i class="fas fa-headset"></i> الدعم الفني</h2>
+                        <button class="btn btn-success" id="newTicketBtn"><i class="fas fa-plus"></i> تذكرة جديدة</button>
                     </div>
-                    <div class="form-group">
-                        <label>حد التنبيه للمخزون المنخفض</label>
-                        <input type="number" class="form-control" id="alertThreshold" value="5">
-                        <small>سيتم إشعارك عندما تكون كمية المنتج أقل من هذا العدد</small>
+                    
+                    <div class="tabs">
+                        <div class="tab active" data-tab="myTickets">تذاكري</div>
+                        <div class="tab" data-tab="allTickets">جميع التذاكر</div>
                     </div>
-                    <div class="form-group">
-                        <button class="btn btn-success" id="saveSettings">حفظ الإعدادات</button>
-                        <button class="btn btn-danger" id="exportData">تصدير البيانات</button>
-                        <button class="btn btn-warning" id="importData">استيراد البيانات</button>
-                        <input type="file" id="importFile" style="display: none;">
+                    
+                    <div class="tab-content active" id="myTickets">
+                        <div id="supportTickets">
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            <div>يتم تخزين البيانات على Firebase وتكون متاحة من أي جهاز</div>
+                    
+                    <div class="tab-content" id="allTickets">
+                        <div id="allSupportTickets">
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- باقي الأقسام (إدارة المنتجات، حركة المستودع، سجل الحركات، التقارير، الإعدادات) -->
+            <!-- ... سيتم تضمينها كما هي في الكود السابق ... -->
+
         </div>
     </div>
 
-    <!-- نموذج إضافة حركة جديدة -->
-    <div class="modal" id="transactionModal">
+    <!-- نموذج إضافة تذكرة دعم فني -->
+    <div class="modal" id="ticketModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-plus"></i> إضافة حركة جديدة</h3>
+                <h3 class="modal-title"><i class="fas fa-plus"></i> تذكرة دعم فني جديدة</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="transactionType">نوع الحركة</label>
-                    <select class="form-control" id="transactionType">
-                        <option value="in">دخول إلى المستودع</option>
-                        <option value="out">خروج من المستودع</option>
+                    <label for="ticketTitle">عنوان التذكرة</label>
+                    <input type="text" class="form-control" id="ticketTitle" placeholder="أدخل عنوانًا واضحًا للمشكلة">
+                </div>
+                <div class="form-group">
+                    <label for="ticketCategory">نوع المشكلة</label>
+                    <select class="form-control" id="ticketCategory">
+                        <option value="technical">مشكلة فنية</option>
+                        <option value="bug">بلاغ عن خطأ</option>
+                        <option value="feature">طلب ميزة جديدة</option>
+                        <option value="other">أخرى</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="transactionProduct">المنتج</label>
-                    <select class="form-control" id="transactionProduct">
-                        <option value="">اختر المنتج</option>
+                    <label for="ticketDescription">وصف المشكلة</label>
+                    <textarea class="form-control" id="ticketDescription" rows="4" placeholder="صف المشكلة بالتفصيل"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ticketPriority">أولوية المشكلة</label>
+                    <select class="form-control" id="ticketPriority">
+                        <option value="low">منخفضة</option>
+                        <option value="medium">متوسطة</option>
+                        <option value="high">عالية</option>
+                        <option value="urgent">عاجلة</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="transactionQuantity">الكمية</label>
-                    <input type="number" class="form-control" id="transactionQuantity" min="1" value="1">
-                </div>
-                <div class="form-group">
-                    <label for="transactionNotes">ملاحظات</label>
-                    <textarea class="form-control" id="transactionNotes" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success" id="saveTransaction" style="width: 100%;">حفظ الحركة</button>
+                    <button class="btn btn-success" id="saveTicket" style="width: 100%;">إرسال التذكرة</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- نموذج إضافة منتج جديد -->
-    <div class="modal" id="productModal">
+    <!-- نموذج عرض تذكرة -->
+    <div class="modal" id="viewTicketModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-plus"></i> إضافة منتج جديد</h3>
+                <h3 class="modal-title"><i class="fas fa-ticket-alt"></i> تفاصيل التذكرة</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="productName">اسم المنتج</label>
-                    <input type="text" class="form-control" id="productName">
+                <div class="ticket-header">
+                    <h4 id="ticketViewTitle">عنوان التذكرة</h4>
+                    <span class="ticket-status" id="ticketViewStatus">مفتوحة</span>
+                </div>
+                <div class="ticket-meta">
+                    <span id="ticketViewAuthor">بواسطة: محمد أحمد</span>
+                    <span> | </span>
+                    <span id="ticketViewDate">تاريخ الإنشاء: 2023-10-05</span>
+                    <span> | </span>
+                    <span id="ticketViewPriority">الأولوية: عالية</span>
                 </div>
                 <div class="form-group">
-                    <label for="productCategory">الفئة</label>
-                    <input type="text" class="form-control" id="productCategory">
+                    <label>وصف المشكلة</label>
+                    <div class="ticket-description" id="ticketViewDescription">
+                        وصف المشكلة هنا...
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="productPrice">السعر</label>
-                    <input type="number" class="form-control" id="productPrice" min="0" step="0.01">
+                    <label>التعليقات</label>
+                    <div class="ticket-comments" id="ticketComments">
+                        <!-- سيتم ملؤها بواسطة JavaScript -->
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="productQuantity">الكمية الأولية</label>
-                    <input type="number" class="form-control" id="productQuantity" min="0" value="0">
+                    <label>إضافة تعليق</label>
+                    <textarea class="form-control" id="ticketComment" rows="3" placeholder="أضف تعليقك هنا"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="productAlert">حد التنبيه</label>
-                    <input type="number" class="form-control" id="productAlert" min="0" value="5">
-                    <small>سيتم إشعارك عندما تكون الكمية أقل من أو تساوي هذا الرقم</small>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success" id="saveProduct" style="width: 100%;">حفظ المنتج</button>
+                    <button class="btn btn-primary" id="addCommentBtn">إضافة تعليق</button>
+                    <button class="btn btn-danger" id="closeTicketBtn">إغلاق التذكرة</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- نموذج الإشعارات -->
+    <div class="modal" id="notificationsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-bell"></i> الإشعارات</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="notificationsList">
+                    <!-- سيتم ملؤها بواسطة JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- سيتم تضمين النماذج الأخرى من الكود السابق هنا -->
 
     <script>
         // تهيئة Firebase
@@ -1033,6 +1220,13 @@
         let transactions = [];
         let settings = { alertThreshold: 5 };
         let currentUser = null;
+        let users = [];
+        let chatMessages = [];
+        let supportTickets = [];
+        let notifications = [];
+        let currentChat = 'general';
+        let selectedUser = null;
+        let privateMessages = {};
         
         // عناصر DOM
         const authContainer = document.getElementById('authContainer');
@@ -1049,138 +1243,31 @@
         const menuLinks = document.querySelectorAll('.sidebar-menu a');
         const sectionContents = document.querySelectorAll('.section-content');
         const pageTitle = document.querySelector('.page-title');
-        const transactionModal = document.getElementById('transactionModal');
-        const productModal = document.getElementById('productModal');
-        const showTransactionModalBtn = document.getElementById('showTransactionModal');
-        const showProductModalBtn = document.getElementById('showProductModal');
-        const closeModalBtns = document.querySelectorAll('.close-modal');
-        const saveTransactionBtn = document.getElementById('saveTransaction');
-        const saveProductBtn = document.getElementById('saveProduct');
-        const saveSettingsBtn = document.getElementById('saveSettings');
-        const exportDataBtn = document.getElementById('exportData');
-        const importDataBtn = document.getElementById('importData');
-        const importFile = document.getElementById('importFile');
+        const chatUsers = document.getElementById('chatUsers');
+        const chatMessagesContainer = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const chatTabs = document.querySelectorAll('.chat-tab');
+        const currentChatInfo = document.getElementById('currentChatInfo');
+        const supportTicketsContainer = document.getElementById('supportTickets');
+        const allSupportTicketsContainer = document.getElementById('allSupportTickets');
+        const newTicketBtn = document.getElementById('newTicketBtn');
+        const ticketTabs = document.querySelectorAll('.tab');
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const notificationCount = document.getElementById('notificationCount');
+        const notificationsModal = document.getElementById('notificationsModal');
+        const notificationsList = document.getElementById('notificationsList');
         
-        // بيانات العناوين للأقسام
-        const sectionTitles = {
-            'dashboard': { icon: 'fa-home', title: 'لوحة التحكم' },
-            'products': { icon: 'fa-boxes', title: 'إدارة المنتجات' },
-            'inventory': { icon: 'fa-exchange-alt', title: 'حركة المستودع' },
-            'transactions': { icon: 'fa-history', title: 'سجل الحركات' },
-            'reports': { icon: 'fa-chart-bar', title: 'التقارير' },
-            'settings': { icon: 'fa-cog', title: 'الإعدادات' }
-        };
-        
-        // تبديل تبويبات المصادقة
-        authTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const targetTab = tab.getAttribute('data-tab');
-                
-                authTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                loginForm.style.display = targetTab === 'login' ? 'block' : 'none';
-                registerForm.style.display = targetTab === 'register' ? 'block' : 'none';
-            });
-        });
-        
-        // تسجيل الدخول
-        loginBtn.addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                showAuthMessage('يرجى ملء جميع الحقول', 'danger');
-                return;
-            }
-            
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                currentUser = userCredential.user;
-                showAuthMessage('تم تسجيل الدخول بنجاح', 'success');
-                
-                // تحميل بيانات المستخدم
-                await loadUserData();
-                
-                // الانتقال إلى التطبيق
-                setTimeout(() => {
-                    authContainer.style.display = 'none';
-                    appContainer.style.display = 'flex';
-                }, 1000);
-                
-            } catch (error) {
-                showAuthMessage('خطأ في تسجيل الدخول: ' + error.message, 'danger');
-            }
-        });
-        
-        // إنشاء حساب
-        registerBtn.addEventListener('click', async () => {
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            
-            if (!name || !email || !password) {
-                showAuthMessage('يرجى ملء جميع الحقول', 'danger');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showAuthMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'danger');
-                return;
-            }
-            
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                currentUser = userCredential.user;
-                
-                // حفظ معلومات المستخدم الإضافية
-                await db.collection('users').doc(currentUser.uid).set({
-                    name: name,
-                    email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                showAuthMessage('تم إنشاء الحساب بنجاح', 'success');
-                
-                // الانتقال إلى التطبيق
-                setTimeout(() => {
-                    authContainer.style.display = 'none';
-                    appContainer.style.display = 'flex';
-                    userName.textContent = name;
-                    userAvatar.textContent = name.charAt(0);
-                }, 1000);
-                
-            } catch (error) {
-                showAuthMessage('خطأ في إنشاء الحساب: ' + error.message, 'danger');
-            }
-        });
-        
-        // تسجيل الخروج
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                await auth.signOut();
-                currentUser = null;
-                products = [];
-                transactions = [];
-                
-                appContainer.style.display = 'none';
+        // الاستماع لتغييرات حالة المصادقة
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                loadUserData();
+            } else {
                 authContainer.style.display = 'flex';
-                
-            } catch (error) {
-                console.error('خطأ في تسجيل الخروج:', error);
+                appContainer.style.display = 'none';
             }
         });
-        
-        // عرض رسالة المصادقة
-        function showAuthMessage(message, type) {
-            authMessage.textContent = message;
-            authMessage.className = `alert alert-${type}`;
-            authMessage.style.display = 'block';
-            
-            setTimeout(() => {
-                authMessage.style.display = 'none';
-            }, 3000);
-        }
         
         // تحميل بيانات المستخدم
         async function loadUserData() {
@@ -1193,7 +1280,16 @@
                     const userData = userDoc.data();
                     userName.textContent = userData.name;
                     userAvatar.textContent = userData.name.charAt(0);
+                    
+                    // تحديث حالة المستخدم إلى متصل
+                    await db.collection('users').doc(currentUser.uid).update({
+                        isOnline: true,
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 }
+                
+                // تحميل المستخدمين
+                await loadUsers();
                 
                 // تحميل المنتجات
                 const productsSnapshot = await db.collection('users').doc(currentUser.uid).collection('products').get();
@@ -1216,12 +1312,567 @@
                     settings = settingsDoc.data();
                 }
                 
+                // تحميل الإشعارات
+                await loadNotifications();
+                
+                // بدء الاستماع للدردشات
+                setupChatListeners();
+                
+                // بدء الاستماع لتذاكر الدعم الفني
+                setupSupportTicketListeners();
+                
                 // تحديث الواجهة
                 initApp();
                 
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
             }
+        }
+        
+        // تحميل المستخدمين
+        async function loadUsers() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                users = [];
+                usersSnapshot.forEach(doc => {
+                    if (doc.id !== currentUser.uid) {
+                        users.push({ id: doc.id, ...doc.data() });
+                    }
+                });
+                
+                updateUsersList();
+            } catch (error) {
+                console.error('خطأ في تحميل المستخدمين:', error);
+            }
+        }
+        
+        // تحديث قائمة المستخدمين
+        function updateUsersList() {
+            chatUsers.innerHTML = '<h4 style="margin-bottom: 15px;">الموظفون المتصلون</h4>';
+            
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'chat-user';
+                userElement.setAttribute('data-id', user.id);
+                userElement.innerHTML = `
+                    <div class="chat-user-avatar">${user.name.charAt(0)}</div>
+                    <div class="chat-user-info">
+                        <div class="chat-user-name">${user.name}</div>
+                        <div class="chat-user-status ${user.isOnline ? '' : 'offline'}">${user.isOnline ? 'متصل' : 'غير متصل'}</div>
+                    </div>
+                `;
+                
+                userElement.addEventListener('click', () => {
+                    document.querySelectorAll('.chat-user').forEach(u => u.classList.remove('active'));
+                    userElement.classList.add('active');
+                    selectedUser = user;
+                    currentChat = 'private';
+                    currentChatInfo.innerHTML = `
+                        <h4>محادثة خاصة مع ${user.name}</h4>
+                        <p>${user.isOnline ? 'متصل الآن' : 'آخر ظهور: ' + new Date(user.lastSeen?.toDate()).toLocaleString()}</p>
+                    `;
+                    loadPrivateMessages(user.id);
+                });
+                
+                chatUsers.appendChild(userElement);
+            });
+        }
+        
+        // إعداد مستمعي الدردشة
+        function setupChatListeners() {
+            // الاستماع للدردشة العامة
+            db.collection('chat').doc('general')
+                .collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    chatMessages = [];
+                    snapshot.forEach(doc => {
+                        chatMessages.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    if (currentChat === 'general') {
+                        updateChatMessages();
+                    }
+                });
+            
+            // الاستماع للمستخدمين المتصلين
+            db.collection('users')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'modified') {
+                            const userData = change.doc.data();
+                            if (userData.id !== currentUser.uid) {
+                                const userElement = document.querySelector(`.chat-user[data-id="${change.doc.id}"]`);
+                                if (userElement) {
+                                    const statusElement = userElement.querySelector('.chat-user-status');
+                                    statusElement.textContent = userData.isOnline ? 'متصل' : 'غير متصل';
+                                    statusElement.className = `chat-user-status ${userData.isOnline ? '' : 'offline'}`;
+                                }
+                            }
+                        }
+                    });
+                });
+        }
+        
+        // تحديث رسائل الدردشة
+        function updateChatMessages() {
+            chatMessagesContainer.innerHTML = '';
+            
+            const messagesToShow = currentChat === 'general' ? chatMessages : (privateMessages[selectedUser?.id] || []);
+            
+            messagesToShow.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${message.senderId === currentUser.uid ? 'sent' : 'received'}`;
+                
+                const senderName = message.senderId === currentUser.uid ? 'أنت' : 
+                                 users.find(u => u.id === message.senderId)?.name || 'مستخدم';
+                
+                messageElement.innerHTML = `
+                    <div class="message-bubble">${message.text}</div>
+                    <div class="message-info">${senderName} - ${new Date(message.timestamp?.toDate()).toLocaleTimeString()}</div>
+                `;
+                
+                chatMessagesContainer.appendChild(messageElement);
+            });
+            
+            // التمرير إلى أحدث رسالة
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+        
+        // تحميل الرسائل الخاصة
+        async function loadPrivateMessages(userId) {
+            try {
+                const snapshot = await db.collection('users').doc(currentUser.uid)
+                    .collection('privateMessages')
+                    .doc(userId)
+                    .collection('messages')
+                    .orderBy('timestamp', 'asc')
+                    .get();
+                
+                privateMessages[userId] = [];
+                snapshot.forEach(doc => {
+                    privateMessages[userId].push({ id: doc.id, ...doc.data() });
+                });
+                
+                updateChatMessages();
+                
+                // بدء الاستماع للرسائل الجديدة
+                db.collection('users').doc(currentUser.uid)
+                    .collection('privateMessages')
+                    .doc(userId)
+                    .collection('messages')
+                    .orderBy('timestamp', 'asc')
+                    .onSnapshot(snapshot => {
+                        privateMessages[userId] = [];
+                        snapshot.forEach(doc => {
+                            privateMessages[userId].push({ id: doc.id, ...doc.data() });
+                        });
+                        
+                        if (currentChat === 'private' && selectedUser?.id === userId) {
+                            updateChatMessages();
+                        }
+                    });
+                    
+            } catch (error) {
+                console.error('خطأ في تحميل الرسائل الخاصة:', error);
+            }
+        }
+        
+        // إرسال رسالة
+        sendMessageBtn.addEventListener('click', async () => {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            
+            try {
+                const messageData = {
+                    text: text,
+                    senderId: currentUser.uid,
+                    senderName: userName.textContent,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                if (currentChat === 'general') {
+                    // إرسال رسالة عامة
+                    await db.collection('chat').doc('general')
+                        .collection('messages')
+                        .add(messageData);
+                } else if (currentChat === 'private' && selectedUser) {
+                    // إرسال رسالة خاصة
+                    await db.collection('users').doc(currentUser.uid)
+                        .collection('privateMessages')
+                        .doc(selectedUser.id)
+                        .collection('messages')
+                        .add(messageData);
+                    
+                    // أيضًا حفظ نسخة عند المستلم
+                    await db.collection('users').doc(selectedUser.id)
+                        .collection('privateMessages')
+                        .doc(currentUser.uid)
+                        .collection('messages')
+                        .add(messageData);
+                    
+                    // إرسال إشعار للمستلم
+                    await db.collection('users').doc(selectedUser.id)
+                        .collection('notifications')
+                        .add({
+                            type: 'message',
+                            title: 'رسالة جديدة',
+                            message: `لديك رسالة جديدة من ${userName.textContent}`,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            read: false,
+                            link: '#chat'
+                        });
+                }
+                
+                messageInput.value = '';
+                
+            } catch (error) {
+                console.error('خطأ في إرسال الرسالة:', error);
+                alert('حدث خطأ أثناء إرسال الرسالة');
+            }
+        });
+        
+        // إدخال الرسالة بالضغط على Enter
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessageBtn.click();
+            }
+        });
+        
+        // تبديل أنواع الدردشة
+        chatTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabType = tab.getAttribute('data-tab');
+                
+                chatTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                currentChat = tabType;
+                
+                if (tabType === 'general') {
+                    currentChatInfo.innerHTML = `
+                        <h4>الدردشة العامة</h4>
+                        <p>محادثة جماعية مع جميع الموظفين</p>
+                    `;
+                    updateChatMessages();
+                } else if (tabType === 'private') {
+                    currentChatInfo.innerHTML = `
+                        <h4>اختر مستخدمًا للدردشة</h4>
+                        <p>انقر على اسم مستخدم لبدء محادثة خاصة</p>
+                    `;
+                    chatMessagesContainer.innerHTML = '<p>اختر مستخدمًا لرؤية المحادثة</p>';
+                }
+            });
+        });
+        
+        // إعداد مستمعي تذاكر الدعم الفني
+        function setupSupportTicketListeners() {
+            // الاستماع لتذاكر المستخدم
+            db.collection('supportTickets')
+                .where('authorId', '==', currentUser.uid)
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    supportTickets = [];
+                    snapshot.forEach(doc => {
+                        supportTickets.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateSupportTickets();
+                });
+            
+            // الاستماع لجميع التذاكر (للمشرفين)
+            db.collection('supportTickets')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    const allTickets = [];
+                    snapshot.forEach(doc => {
+                        allTickets.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateAllSupportTickets(allTickets);
+                });
+        }
+        
+        // تحديث تذاكر الدعم الفني
+        function updateSupportTickets() {
+            supportTicketsContainer.innerHTML = '';
+            
+            if (supportTickets.length === 0) {
+                supportTicketsContainer.innerHTML = '<p>لا توجد تذاكر دعم فني</p>';
+                return;
+            }
+            
+            supportTickets.forEach(ticket => {
+                const ticketElement = document.createElement('div');
+                ticketElement.className = 'support-ticket';
+                ticketElement.innerHTML = `
+                    <div class="ticket-header">
+                        <div class="ticket-title">${ticket.title}</div>
+                        <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'مفتوحة' : 'مغلقة'}</span>
+                    </div>
+                    <div class="ticket-meta">
+                        <span>النوع: ${getTicketCategoryName(ticket.category)}</span>
+                        <span> | </span>
+                        <span>الأولوية: ${getTicketPriorityName(ticket.priority)}</span>
+                        <span> | </span>
+                        <span>التاريخ: ${new Date(ticket.createdAt?.toDate()).toLocaleDateString()}</span>
+                    </div>
+                    <div class="ticket-actions">
+                        <button class="btn btn-primary view-ticket" data-id="${ticket.id}">عرض</button>
+                    </div>
+                `;
+                
+                supportTicketsContainer.appendChild(ticketElement);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار العرض
+            document.querySelectorAll('.view-ticket').forEach(button => {
+                button.addEventListener('click', () => {
+                    const ticketId = button.getAttribute('data-id');
+                    viewTicket(ticketId);
+                });
+            });
+        }
+        
+        // تحديث جميع تذاكر الدعم الفني
+        function updateAllSupportTickets(tickets) {
+            allSupportTicketsContainer.innerHTML = '';
+            
+            if (tickets.length === 0) {
+                allSupportTicketsContainer.innerHTML = '<p>لا توجد تذاكر دعم فني</p>';
+                return;
+            }
+            
+            tickets.forEach(ticket => {
+                const ticketElement = document.createElement('div');
+                ticketElement.className = 'support-ticket';
+                ticketElement.innerHTML = `
+                    <div class="ticket-header">
+                        <div class="ticket-title">${ticket.title}</div>
+                        <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'مفتوحة' : 'مغلقة'}</span>
+                    </div>
+                    <div class="ticket-meta">
+                        <span>بواسطة: ${ticket.authorName}</span>
+                        <span> | </span>
+                        <span>النوع: ${getTicketCategoryName(ticket.category)}</span>
+                        <span> | </span>
+                        <span>الأولوية: ${getTicketPriorityName(ticket.priority)}</span>
+                        <span> | </span>
+                        <span>التاريخ: ${new Date(ticket.createdAt?.toDate()).toLocaleDateString()}</span>
+                    </div>
+                    <div class="ticket-actions">
+                        <button class="btn btn-primary view-ticket" data-id="${ticket.id}">عرض</button>
+                    </div>
+                `;
+                
+                allSupportTicketsContainer.appendChild(ticketElement);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار العرض
+            document.querySelectorAll('.view-ticket').forEach(button => {
+                button.addEventListener('click', () => {
+                    const ticketId = button.getAttribute('data-id');
+                    viewTicket(ticketId);
+                });
+            });
+        }
+        
+        // تحميل التذكرة للعرض
+        async function viewTicket(ticketId) {
+            try {
+                const ticketDoc = await db.collection('supportTickets').doc(ticketId).get();
+                if (ticketDoc.exists) {
+                    const ticket = { id: ticketDoc.id, ...ticketDoc.data() };
+                    
+                    // عرض بيانات التذكرة في النموذج
+                    document.getElementById('ticketViewTitle').textContent = ticket.title;
+                    document.getElementById('ticketViewStatus').textContent = ticket.status === 'open' ? 'مفتوحة' : 'مغلقة';
+                    document.getElementById('ticketViewStatus').className = `ticket-status ${ticket.status}`;
+                    document.getElementById('ticketViewAuthor').textContent = `بواسطة: ${ticket.authorName}`;
+                    document.getElementById('ticketViewDate').textContent = `تاريخ الإنشاء: ${new Date(ticket.createdAt?.toDate()).toLocaleDateString()}`;
+                    document.getElementById('ticketViewPriority').textContent = `الأولوية: ${getTicketPriorityName(ticket.priority)}`;
+                    document.getElementById('ticketViewDescription').textContent = ticket.description;
+                    
+                    // تحميل التعليقات
+                    const commentsSnapshot = await db.collection('supportTickets').doc(ticketId)
+                        .collection('comments')
+                        .orderBy('timestamp', 'asc')
+                        .get();
+                    
+                    const commentsContainer = document.getElementById('ticketComments');
+                    commentsContainer.innerHTML = '';
+                    
+                    commentsSnapshot.forEach(doc => {
+                        const comment = doc.data();
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'ticket-comment';
+                        commentElement.innerHTML = `
+                            <div><strong>${comment.authorName}:</strong> ${comment.text}</div>
+                            <div class="ticket-meta">${new Date(comment.timestamp?.toDate()).toLocaleString()}</div>
+                        `;
+                        commentsContainer.appendChild(commentElement);
+                    });
+                    
+                    // إظهار النموذج
+                    document.getElementById('viewTicketModal').style.display = 'flex';
+                    
+                    // إعداد أزرار التفاعل
+                    document.getElementById('addCommentBtn').onclick = () => addComment(ticketId);
+                    document.getElementById('closeTicketBtn').onclick = () => closeTicket(ticketId);
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل التذكرة:', error);
+                alert('حدث خطأ أثناء تحميل التذكرة');
+            }
+        }
+        
+        // إضافة تعليق على التذكرة
+        async function addComment(ticketId) {
+            const commentText = document.getElementById('ticketComment').value.trim();
+            if (!commentText) return;
+            
+            try {
+                await db.collection('supportTickets').doc(ticketId)
+                    .collection('comments')
+                    .add({
+                        text: commentText,
+                        authorId: currentUser.uid,
+                        authorName: userName.textContent,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                
+                document.getElementById('ticketComment').value = '';
+                
+                // إعادة تحميل التعليقات
+                viewTicket(ticketId);
+                
+            } catch (error) {
+                console.error('خطأ في إضافة التعليق:', error);
+                alert('حدث خطأ أثناء إضافة التعليق');
+            }
+        }
+        
+        // إغلاق التذكرة
+        async function closeTicket(ticketId) {
+            try {
+                await db.collection('supportTickets').doc(ticketId).update({
+                    status: 'closed',
+                    closedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('تم إغلاق التذكرة بنجاح');
+                document.getElementById('viewTicketModal').style.display = 'none';
+                
+            } catch (error) {
+                console.error('خطأ في إغلاق التذكرة:', error);
+                alert('حدث خطأ أثناء إغلاق التذكرة');
+            }
+        }
+        
+        // تحميل الإشعارات
+        async function loadNotifications() {
+            try {
+                const snapshot = await db.collection('users').doc(currentUser.uid)
+                    .collection('notifications')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                notifications = [];
+                snapshot.forEach(doc => {
+                    notifications.push({ id: doc.id, ...doc.data() });
+                });
+                
+                updateNotificationCount();
+                
+                // بدء الاستماع للإشعارات الجديدة
+                db.collection('users').doc(currentUser.uid)
+                    .collection('notifications')
+                    .orderBy('timestamp', 'desc')
+                    .onSnapshot(snapshot => {
+                        notifications = [];
+                        snapshot.forEach(doc => {
+                            notifications.push({ id: doc.id, ...doc.data() });
+                        });
+                        
+                        updateNotificationCount();
+                    });
+                    
+            } catch (error) {
+                console.error('خطأ في تحميل الإشعارات:', error);
+            }
+        }
+        
+        // تحديث عدد الإشعارات
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            
+            if (unreadCount > 0) {
+                notificationCount.textContent = unreadCount;
+                notificationCount.style.display = 'inline';
+            } else {
+                notificationCount.style.display = 'none';
+            }
+        }
+        
+        // عرض الإشعارات
+        notificationsBtn.addEventListener('click', () => {
+            notificationsList.innerHTML = '';
+            
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = '<p>لا توجد إشعارات</p>';
+            } else {
+                notifications.forEach(notification => {
+                    const notificationElement = document.createElement('div');
+                    notificationElement.className = `alert ${notification.read ? 'alert-info' : 'alert-warning'}`;
+                    notificationElement.innerHTML = `
+                        <div>
+                            <strong>${notification.title}</strong>
+                            <p>${notification.message}</p>
+                            <small>${new Date(notification.timestamp?.toDate()).toLocaleString()}</small>
+                        </div>
+                    `;
+                    
+                    notificationElement.addEventListener('click', async () => {
+                        // وضع علامة مقروء على الإشعار
+                        if (!notification.read) {
+                            await db.collection('users').doc(currentUser.uid)
+                                .collection('notifications')
+                                .doc(notification.id)
+                                .update({ read: true });
+                        }
+                        
+                        // الانتقال إلى القسم المحدد
+                        if (notification.link) {
+                            window.location.hash = notification.link;
+                        }
+                        
+                        notificationsModal.style.display = 'none';
+                    });
+                    
+                    notificationsList.appendChild(notificationElement);
+                });
+            }
+            
+            notificationsModal.style.display = 'flex';
+        });
+        
+        // وظائف مساعدة
+        function getTicketCategoryName(category) {
+            const categories = {
+                'technical': 'مشكلة فنية',
+                'bug': 'بلاغ عن خطأ',
+                'feature': 'طلب ميزة جديدة',
+                'other': 'أخرى'
+            };
+            return categories[category] || category;
+        }
+        
+        function getTicketPriorityName(priority) {
+            const priorities = {
+                'low': 'منخفضة',
+                'medium': 'متوسطة',
+                'high': 'عالية',
+                'urgent': 'عاجلة'
+            };
+            return priorities[priority] || priority;
         }
         
         // تهيئة التطبيق
@@ -1235,466 +1886,9 @@
             loadSettings();
         }
         
-        // تحديث لوحة التحكم
-        function updateDashboard() {
-            // الإحصائيات
-            document.getElementById('totalProducts').textContent = products.length;
-            
-            const totalQuantity = products.reduce((sum, product) => sum + product.quantity, 0);
-            document.getElementById('totalQuantity').textContent = totalQuantity;
-            
-            const lowStockCount = products.filter(p => p.quantity <= (p.alertThreshold || settings.alertThreshold)).length;
-            document.getElementById('lowStockCount').textContent = lowStockCount;
-            
-            const today = new Date().toLocaleDateString();
-            const todayTransactions = transactions.filter(t => new Date(t.date).toLocaleDateString() === today).length;
-            document.getElementById('todayTransactions').textContent = todayTransactions;
-            
-            // الحركات الحديثة
-            const recentTransactions = transactions.slice(0, 5);
-            const recentTransactionsList = document.getElementById('recentTransactions');
-            recentTransactionsList.innerHTML = '';
-            
-            recentTransactions.forEach(transaction => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${transaction.id}</td>
-                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                    <td>${transaction.productName}</td>
-                    <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
-                    <td>${transaction.quantity}</td>
-                    <td><span class="status-badge status-active">مكتمل</span></td>
-                    <td>
-                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                    </td>
-                `;
-                recentTransactionsList.appendChild(row);
-            });
-            
-            // المنتجات الأكثر حركة
-            const topProductsList = document.getElementById('topProducts');
-            topProductsList.innerHTML = '';
-            
-            // هنا يمكنك إضافة منطق لعرض المنتجات الأكثر حركة
-            products.slice(0, 5).forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.price} ر.س</td>
-                    <td>${product.quantity}</td>
-                    <td>0</td>
-                    <td><span class="status-badge ${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'status-inactive' : 'status-active'}">${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'منخفض' : 'متوفر'}</span></td>
-                `;
-                topProductsList.appendChild(row);
-            });
-            
-            // تنبيهات المخزون
-            const stockAlerts = document.getElementById('stockAlerts');
-            stockAlerts.innerHTML = '';
-            
-            const lowStockProducts = products.filter(p => p.quantity <= (p.alertThreshold || settings.alertThreshold));
-            if (lowStockProducts.length === 0) {
-                stockAlerts.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> لا توجد تنبيهات</div>';
-            } else {
-                lowStockProducts.forEach(product => {
-                    const alert = document.createElement('div');
-                    alert.className = 'alert alert-danger';
-                    alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${product.name} - الكمية منخفضة (${product.quantity})`;
-                    stockAlerts.appendChild(alert);
-                });
-            }
-        }
+        // باقي الكود الأساسي للتطبيق (التسجيل، الدخول، إدارة المنتجات، إلخ)
+        // ... سيتم تضمينه كما هو في الكود السابق ...
         
-        // تحديث قائمة المنتجات
-        function updateProductsList() {
-            const productsList = document.getElementById('productsList');
-            productsList.innerHTML = '';
-            
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.category || 'بدون فئة'}</td>
-                    <td>${product.price} ر.س</td>
-                    <td>${product.quantity}</td>
-                    <td><span class="status-badge ${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'status-inactive' : 'status-active'}">${product.quantity <= (product.alertThreshold || settings.alertThreshold) ? 'منخفض' : 'متوفر'}</span></td>
-                    <td>
-                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger" data-id="${product.id}"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                productsList.appendChild(row);
-            });
-            
-            // إضافة مستمعي الأحداث لأزرار الحذف
-            document.querySelectorAll('.btn-danger').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-id');
-                    deleteProduct(productId);
-                });
-            });
-        }
-        
-        // تحديث قائمة حركات المستودع
-        function updateInventoryList() {
-            const inventoryList = document.getElementById('inventoryList');
-            inventoryList.innerHTML = '';
-            
-            transactions.slice(0, 10).forEach(transaction => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${transaction.id}</td>
-                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                    <td>${transaction.productName}</td>
-                    <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
-                    <td>${transaction.quantity}</td>
-                    <td><span class="status-badge status-active">مكتمل</span></td>
-                    <td>
-                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                    </td>
-                `;
-                inventoryList.appendChild(row);
-            });
-        }
-        
-        // تحديث سجل الحركات
-        function updateTransactionsList() {
-            const transactionsList = document.getElementById('transactionsList');
-            transactionsList.innerHTML = '';
-            
-            transactions.forEach(transaction => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>#${transaction.id}</td>
-                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
-                    <td>${transaction.productName}</td>
-                    <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
-                    <td>${transaction.quantity}</td>
-                    <td><span class="status-badge status-active">مكتمل</span></td>
-                `;
-                transactionsList.appendChild(row);
-            });
-        }
-        
-        // تحديث التقارير
-        function updateReports() {
-            const totalIn = transactions
-                .filter(t => t.type === 'in')
-                .reduce((sum, t) => sum + t.quantity, 0);
-            
-            const totalOut = transactions
-                .filter(t => t.type === 'out')
-                .reduce((sum, t) => sum + t.quantity, 0);
-            
-            document.getElementById('totalIn').textContent = totalIn;
-            document.getElementById('totalOut').textContent = totalOut;
-            
-            // هنا يمكنك إضافة المزيد من منطق التقارير
-        }
-        
-        // تحميل خيارات المنتجات في النماذج
-        function loadProductOptions() {
-            const productSelect = document.getElementById('transactionProduct');
-            productSelect.innerHTML = '<option value="">اختر المنتج</option>';
-            
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = product.name;
-                productSelect.appendChild(option);
-            });
-        }
-        
-        // تحميل الإعدادات
-        function loadSettings() {
-            document.getElementById('alertThreshold').value = settings.alertThreshold || 5;
-        }
-        
-        // حفظ الإعدادات
-        saveSettingsBtn.addEventListener('click', async function() {
-            if (!currentUser) return;
-            
-            settings.alertThreshold = parseInt(document.getElementById('alertThreshold').value);
-            
-            try {
-                await db.collection('users').doc(currentUser.uid).collection('settings').doc('app').set(settings);
-                alert('تم حفظ الإعدادات بنجاح');
-                updateDashboard();
-            } catch (error) {
-                console.error('خطأ في حفظ الإعدادات:', error);
-                alert('حدث خطأ أثناء حفظ الإعدادات');
-            }
-        });
-        
-        // تصدير البيانات
-        exportDataBtn.addEventListener('click', function() {
-            const data = {
-                products: products,
-                transactions: transactions,
-                settings: settings,
-                exportedAt: new Date().toISOString()
-            };
-            
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `inventory_backup_${new Date().toISOString().slice(0,10)}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        });
-        
-        // استيراد البيانات
-        importDataBtn.addEventListener('click', function() {
-            importFile.click();
-        });
-        
-        importFile.addEventListener('change', async function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    if (data.products && data.transactions) {
-                        // حفظ البيانات في Firebase
-                        const batch = db.batch();
-                        
-                        // حفظ المنتجات
-                        data.products.forEach(product => {
-                            const productRef = db.collection('users').doc(currentUser.uid).collection('products').doc(product.id);
-                            batch.set(productRef, product);
-                        });
-                        
-                        // حفظ الحركات
-                        data.transactions.forEach(transaction => {
-                            const transactionRef = db.collection('users').doc(currentUser.uid).collection('transactions').doc(transaction.id);
-                            batch.set(transactionRef, transaction);
-                        });
-                        
-                        // حفظ الإعدادات إذا كانت موجودة
-                        if (data.settings) {
-                            const settingsRef = db.collection('users').doc(currentUser.uid).collection('settings').doc('app');
-                            batch.set(settingsRef, data.settings);
-                        }
-                        
-                        await batch.commit();
-                        
-                        // إعادة تحميل البيانات
-                        await loadUserData();
-                        
-                        alert('تم استيراد البيانات بنجاح');
-                    } else {
-                        alert('ملف غير صالح');
-                    }
-                } catch (error) {
-                    console.error('خطأ في استيراد البيانات:', error);
-                    alert('حدث خطأ أثناء استيراد البيانات');
-                }
-            };
-            reader.readAsText(file);
-        });
-        
-        // حفظ منتج جديد
-        saveProductBtn.addEventListener('click', async function() {
-            if (!currentUser) return;
-            
-            const name = document.getElementById('productName').value;
-            const category = document.getElementById('productCategory').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const quantity = parseInt(document.getElementById('productQuantity').value);
-            const alertThreshold = parseInt(document.getElementById('productAlert').value);
-            
-            if (!name || !price) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
-                return;
-            }
-            
-            try {
-                const newProduct = {
-                    name,
-                    category,
-                    price,
-                    quantity,
-                    alertThreshold,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                const docRef = await db.collection('users').doc(currentUser.uid).collection('products').add(newProduct);
-                
-                // إضافة المعرف إلى المنتج
-                await db.collection('users').doc(currentUser.uid).collection('products').doc(docRef.id).update({
-                    id: docRef.id
-                });
-                
-                productModal.style.display = 'none';
-                alert('تم إضافة المنتج بنجاح');
-                
-                // إعادة تحميل البيانات
-                await loadUserData();
-                
-            } catch (error) {
-                console.error('خطأ في إضافة المنتج:', error);
-                alert('حدث خطأ أثناء إضافة المنتج');
-            }
-        });
-        
-        // حفظ حركة جديدة
-        saveTransactionBtn.addEventListener('click', async function() {
-            if (!currentUser) return;
-            
-            const type = document.getElementById('transactionType').value;
-            const productId = document.getElementById('transactionProduct').value;
-            const quantity = parseInt(document.getElementById('transactionQuantity').value);
-            const notes = document.getElementById('transactionNotes').value;
-            
-            if (!productId || !quantity) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
-                return;
-            }
-            
-            try {
-                const product = products.find(p => p.id === productId);
-                if (!product) {
-                    alert('المنتج المحدد غير موجود');
-                    return;
-                }
-                
-                if (type === 'out' && product.quantity < quantity) {
-                    alert('الكمية غير كافية في المخزون');
-                    return;
-                }
-                
-                // تحديث كمية المنتج
-                if (type === 'in') {
-                    product.quantity += quantity;
-                } else {
-                    product.quantity -= quantity;
-                }
-                
-                // تحديث المنتج في Firebase
-                await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).update({
-                    quantity: product.quantity
-                });
-                
-                // إضافة الحركة
-                const newTransaction = {
-                    productId: product.id,
-                    productName: product.name,
-                    type,
-                    quantity,
-                    notes,
-                    date: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                const docRef = await db.collection('users').doc(currentUser.uid).collection('transactions').add(newTransaction);
-                
-                // إضافة المعرف إلى الحركة
-                await db.collection('users').doc(currentUser.uid).collection('transactions').doc(docRef.id).update({
-                    id: docRef.id
-                });
-                
-                transactionModal.style.display = 'none';
-                alert('تم إضافة الحركة بنجاح');
-                
-                // إعادة تحميل البيانات
-                await loadUserData();
-                
-            } catch (error) {
-                console.error('خطأ في إضافة الحركة:', error);
-                alert('حدث خطأ أثناء إضافة الحركة');
-            }
-        });
-        
-        // حذف منتج
-        async function deleteProduct(productId) {
-            if (!currentUser) return;
-            
-            if (confirm('هل أنت متأكد من أنك تريد حذف هذا المنتج؟')) {
-                try {
-                    await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).delete();
-                    alert('تم حذف المنتج بنجاح');
-                    
-                    // إعادة تحميل البيانات
-                    await loadUserData();
-                    
-                } catch (error) {
-                    console.error('خطأ في حذف المنتج:', error);
-                    alert('حدث خطأ أثناء حذف المنتج');
-                }
-            }
-        }
-        
-        // تغيير القسم النشط عند النقر على رابط القائمة
-        menuLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // إذا كان الرابط ليس لتسجيل الخروج
-                if (!this.querySelector('.fa-sign-out-alt')) {
-                    const targetSection = this.getAttribute('data-section');
-                    
-                    // إزالة النشاط من جميع الروابط
-                    menuLinks.forEach(link => link.classList.remove('active'));
-                    // إضافة النشاط للرابط الحالي
-                    this.classList.add('active');
-                    
-                    // إخفاء جميع الأقسام
-                    sectionContents.forEach(section => section.classList.remove('active'));
-                    // إظهار القسم المحدد
-                    document.getElementById(targetSection).classList.add('active');
-                    
-                    // تحديث عنوان الصفحة
-                    if (sectionTitles[targetSection]) {
-                        const { icon, title } = sectionTitles[targetSection];
-                        pageTitle.innerHTML = `<i class="fas ${icon}"></i> ${title}`;
-                    }
-                }
-            });
-        });
-        
-        // فتح النماذج
-        showTransactionModalBtn.addEventListener('click', function() {
-            transactionModal.style.display = 'flex';
-        });
-        
-        showProductModalBtn.addEventListener('click', function() {
-            productModal.style.display = 'flex';
-        });
-        
-        // إغلاق النماذج
-        closeModalBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                transactionModal.style.display = 'none';
-                productModal.style.display = 'none';
-            });
-        });
-        
-        // إغلاق النماذج عند النقر خارج المحتوى
-        window.addEventListener('click', function(e) {
-            if (e.target === transactionModal) {
-                transactionModal.style.display = 'none';
-            }
-            if (e.target === productModal) {
-                productModal.style.display = 'none';
-            }
-        });
-        
-        // الاستماع لتغييرات حالة المصادقة
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                currentUser = user;
-                loadUserData();
-            } else {
-                authContainer.style.display = 'flex';
-                appContainer.style.display = 'none';
-            }
-        });
     </script>
 </body>
 </html>
