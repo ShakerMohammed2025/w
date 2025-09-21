@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>نظام جرد المستودع</title>
+    <title>نظام جرد المستودع - متعدد الأجهزة</title>
     <style>
         :root {
             --primary-color: #3498db;
             --secondary-color: #2ecc71;
             --danger-color: #e74c3c;
+            --warning-color: #f39c12;
             --dark-color: #34495e;
             --light-color: #ecf0f1;
         }
@@ -41,6 +42,36 @@
             text-align: center;
             border-radius: 5px;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sync-status {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        
+        .synced {
+            background-color: var(--secondary-color);
+        }
+        
+        .not-synced {
+            background-color: var(--warning-color);
         }
         
         nav {
@@ -49,6 +80,7 @@
             background-color: var(--primary-color);
             border-radius: 5px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         nav button {
@@ -139,6 +171,14 @@
             background-color: #27ae60;
         }
         
+        button.warning {
+            background-color: var(--warning-color);
+        }
+        
+        button.warning:hover {
+            background-color: #e67e22;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -184,6 +224,12 @@
             border: 1px solid #f5c6cb;
         }
         
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
         .stat-box {
             background: white;
             padding: 20px;
@@ -221,6 +267,30 @@
             text-align: center;
         }
         
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-container h2 {
+            text-align: center;
+        }
+        
+        .offline-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             nav {
                 flex-direction: column;
@@ -233,208 +303,660 @@
             .actions {
                 flex-direction: column;
             }
+            
+            header {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
+    <!-- Firebase App (core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="security-warning">
-            <strong>ملاحظة أمان:</strong> هذا التطبيق يعمل على تخزين البيانات محلياً في متصفحك فقط. لا يتم إرسال أي بيانات إلى أي خادم خارجي.
-        </div>
-        
-        <header>
-            <h1>نظام جرد المستودع</h1>
-        </header>
-        
-        <nav>
-            <button class="nav-btn active" data-target="dashboard">لوحة التحكم</button>
-            <button class="nav-btn" data-target="products">إدارة المنتجات</button>
-            <button class="nav-btn" data-target="inventory">حركة المستودع</button>
-            <button class="nav-btn" data-target="transactions">سجل الحركات</button>
-            <button class="nav-btn" data-target="reports">التقارير</button>
-        </nav>
-        
-        <div id="alertBox" class="alert"></div>
-        
-        <!-- لوحة التحكم -->
-        <section id="dashboard" class="section active">
-            <h2>لوحة التحكم</h2>
-            
-            <div class="stats-container">
-                <div class="stat-box">
-                    <h3>إجمالي المنتجات</h3>
-                    <div class="value" id="totalProducts">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>إجمالي الكمية في المخزون</h3>
-                    <div class="value" id="totalQuantity">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>إجمالي قيمة المخزون</h3>
-                    <div class="value" id="totalValue">0</div>
-                </div>
-            </div>
-            
-            <h2>المنتجات منخفضة المخزون</h2>
-            <table id="lowStockTable">
-                <thead>
-                    <tr>
-                        <th>اسم المنتج</th>
-                        <th>الكمية المتاحة</th>
-                        <th>حد التنبيه</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- سيتم ملؤها بواسطة JavaScript -->
-                </tbody>
-            </table>
-        </section>
-        
-        <!-- إدارة المنتجات -->
-        <section id="products" class="section">
-            <h2>إدارة المنتجات</h2>
-            
-            <form id="productForm">
-                <input type="hidden" id="productId">
-                <div class="form-group">
-                    <label for="productName">اسم المنتج</label>
-                    <input type="text" id="productName" required>
-                </div>
-                <div class="form-group">
-                    <label for="productDescription">وصف المنتج</label>
-                    <textarea id="productDescription"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="productCategory">الفئة</label>
-                    <input type="text" id="productCategory">
-                </div>
-                <div class="form-group">
-                    <label for="productPrice">سعر الوحدة</label>
-                    <input type="number" id="productPrice" step="0.01" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="productAlertQuantity">حد التنبيه (الحد الأدنى للكمية)</label>
-                    <input type="number" id="productAlertQuantity" min="0" value="5">
-                </div>
-                <button type="submit" class="success">حفظ المنتج</button>
-                <button type="button" id="resetProductForm">جديد</button>
-            </form>
-            
-            <h2>قائمة المنتجات</h2>
-            <table id="productsTable">
-                <thead>
-                    <tr>
-                        <th>اسم المنتج</th>
-                        <th>الفئة</th>
-                        <th>السعر</th>
-                        <th>الكمية</th>
-                        <th>الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- سيتم ملؤها بواسطة JavaScript -->
-                </tbody>
-            </table>
-        </section>
-        
-        <!-- حركة المستودع -->
-        <section id="inventory" class="section">
-            <h2>حركة المستودع</h2>
-            
-            <form id="transactionForm">
-                <div class="form-group">
-                    <label for="transactionType">نوع الحركة</label>
-                    <select id="transactionType" required>
-                        <option value="in">دخول إلى المستودع</option>
-                        <option value="out">خروج من المستودع</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="transactionProduct">المنتج</label>
-                    <select id="transactionProduct" required>
-                        <option value="">اختر المنتج</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="transactionQuantity">الكمية</label>
-                    <input type="number" id="transactionQuantity" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="transactionNotes">ملاحظات</label>
-                    <textarea id="transactionNotes"></textarea>
-                </div>
-                <button type="submit" class="success">تسجيل الحركة</button>
-            </form>
-        </section>
-        
-        <!-- سجل الحركات -->
-        <section id="transactions" class="section">
-            <h2>سجل حركات المستودع</h2>
-            
+    <div id="app">
+        <div class="login-container" id="loginSection">
+            <h2>تسجيل الدخول إلى نظام الجرد</h2>
             <div class="form-group">
-                <label for="filterProduct">تصفية حسب المنتج</label>
-                <select id="filterProduct">
-                    <option value="">جميع المنتجات</option>
-                </select>
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني">
+            </div>
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور">
+            </div>
+            <button id="loginBtn" class="success" style="width: 100%;">تسجيل الدخول</button>
+            <p style="text-align: center; margin-top: 15px;">
+                ليس لديك حساب؟ <a href="#" id="showRegister">إنشاء حساب جديد</a>
+            </p>
+        </div>
+
+        <div class="login-container" id="registerSection" style="display: none;">
+            <h2>إنشاء حساب جديد</h2>
+            <div class="form-group">
+                <label for="regEmail">البريد الإلكتروني</label>
+                <input type="email" id="regEmail" placeholder="أدخل بريدك الإلكتروني">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">كلمة المرور</label>
+                <input type="password" id="regPassword" placeholder="أدخل كلمة المرور (6 أحرف على الأقل)">
+            </div>
+            <div class="form-group">
+                <label for="regName">اسم المستخدم</label>
+                <input type="text" id="regName" placeholder="أدخل اسمك">
+            </div>
+            <button id="registerBtn" class="success" style="width: 100%;">إنشاء حساب</button>
+            <p style="text-align: center; margin-top: 15px;">
+                لديك حساب بالفعل؟ <a href="#" id="showLogin">تسجيل الدخول</a>
+            </p>
+        </div>
+
+        <div id="mainApp" style="display: none;">
+            <div class="offline-warning" id="offlineWarning">
+                أنت غير متصل بالإنترنت. يتم حفظ البيانات محلياً وسيتم مزامنتها عند اتصالك بالإنترنت.
             </div>
             
-            <table id="transactionsTable">
-                <thead>
-                    <tr>
-                        <th>التاريخ</th>
-                        <th>المنتج</th>
-                        <th>النوع</th>
-                        <th>الكمية</th>
-                        <th>الملاحظات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- سيتم ملؤها بواسطة JavaScript -->
-                </tbody>
-            </table>
-        </section>
-        
-        <!-- التقارير -->
-        <section id="reports" class="section">
-            <h2>تقارير المخزون</h2>
-            
-            <div class="stats-container">
-                <div class="stat-box">
-                    <h3>إجمالي حركات الدخل</h3>
-                    <div class="value" id="totalIn">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>إجمالي حركات الخروج</h3>
-                    <div class="value" id="totalOut">0</div>
-                </div>
+            <div class="container">
+                <header>
+                    <h1>نظام جرد المستودع</h1>
+                    <div class="user-info">
+                        <span id="userName"></span>
+                        <div class="sync-status">
+                            <span id="syncStatus">جاري المزامنة...</span>
+                            <div class="sync-indicator" id="syncIndicator"></div>
+                        </div>
+                        <button id="logoutBtn" class="danger">تسجيل الخروج</button>
+                    </div>
+                </header>
+                
+                <nav>
+                    <button class="nav-btn active" data-target="dashboard">لوحة التحكم</button>
+                    <button class="nav-btn" data-target="products">إدارة المنتجات</button>
+                    <button class="nav-btn" data-target="inventory">حركة المستودع</button>
+                    <button class="nav-btn" data-target="transactions">سجل الحركات</button>
+                    <button class="nav-btn" data-target="reports">التقارير</button>
+                    <button class="nav-btn" data-target="settings">الإعدادات</button>
+                </nav>
+                
+                <div id="alertBox" class="alert"></div>
+                
+                <!-- لوحة التحكم -->
+                <section id="dashboard" class="section active">
+                    <h2>لوحة التحكم</h2>
+                    
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <h3>إجمالي المنتجات</h3>
+                            <div class="value" id="totalProducts">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>إجمالي الكمية في المخزون</h3>
+                            <div class="value" id="totalQuantity">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>إجمالي قيمة المخزون</h3>
+                            <div class="value" id="totalValue">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>آخر تحديث</h3>
+                            <div class="value" id="lastUpdate">-</div>
+                        </div>
+                    </div>
+                    
+                    <h2>المنتجات منخفضة المخزون</h2>
+                    <table id="lowStockTable">
+                        <thead>
+                            <tr>
+                                <th>اسم المنتج</th>
+                                <th>الكمية المتاحة</th>
+                                <th>حد التنبيه</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- إدارة المنتجات -->
+                <section id="products" class="section">
+                    <h2>إدارة المنتجات</h2>
+                    
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="form-group">
+                            <label for="productName">اسم المنتج</label>
+                            <input type="text" id="productName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">وصف المنتج</label>
+                            <textarea id="productDescription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="productCategory">الفئة</label>
+                            <input type="text" id="productCategory">
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice">سعر الوحدة</label>
+                            <input type="number" id="productPrice" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productAlertQuantity">حد التنبيه (الحد الأدنى للكمية)</label>
+                            <input type="number" id="productAlertQuantity" min="0" value="5">
+                        </div>
+                        <button type="submit" class="success">حفظ المنتج</button>
+                        <button type="button" id="resetProductForm">جديد</button>
+                    </form>
+                    
+                    <h2>قائمة المنتجات</h2>
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>اسم المنتج</th>
+                                <th>الفئة</th>
+                                <th>السعر</th>
+                                <th>الكمية</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- حركة المستودع -->
+                <section id="inventory" class="section">
+                    <h2>حركة المستودع</h2>
+                    
+                    <form id="transactionForm">
+                        <div class="form-group">
+                            <label for="transactionType">نوع الحركة</label>
+                            <select id="transactionType" required>
+                                <option value="in">دخول إلى المستودع</option>
+                                <option value="out">خروج من المستودع</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="transactionProduct">المنتج</label>
+                            <select id="transactionProduct" required>
+                                <option value="">اختر المنتج</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="transactionQuantity">الكمية</label>
+                            <input type="number" id="transactionQuantity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="transactionNotes">ملاحظات</label>
+                            <textarea id="transactionNotes"></textarea>
+                        </div>
+                        <button type="submit" class="success">تسجيل الحركة</button>
+                    </form>
+                </section>
+                
+                <!-- سجل الحركات -->
+                <section id="transactions" class="section">
+                    <h2>سجل حركات المستودع</h2>
+                    
+                    <div class="form-group">
+                        <label for="filterProduct">تصفية حسب المنتج</label>
+                        <select id="filterProduct">
+                            <option value="">جميع المنتجات</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterDate">تصفية حسب التاريخ</label>
+                        <input type="date" id="filterDate">
+                    </div>
+                    
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>المنتج</th>
+                                <th>النوع</th>
+                                <th>الكمية</th>
+                                <th>الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- التقارير -->
+                <section id="reports" class="section">
+                    <h2>تقارير المخزون</h2>
+                    
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <h3>إجمالي حركات الدخل</h3>
+                            <div class="value" id="totalIn">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>إجمالي حركات الخروج</h3>
+                            <div class="value" id="totalOut">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>أعلى منتج مبيعاً</h3>
+                            <div class="value" id="topProduct">-</div>
+                        </div>
+                    </div>
+                    
+                    <h2>أكثر المنتجات حركة</h2>
+                    <table id="topProductsTable">
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th>إجمالي الدخل</th>
+                                <th>إجمالي الخروج</th>
+                                <th>صافي الحركة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <h2>تقرير القيمة الإجمالية</h2>
+                    <table id="valueReportTable">
+                        <thead>
+                            <tr>
+                                <th>الفئة</th>
+                                <th>عدد المنتجات</th>
+                                <th>القيمة الإجمالية</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- الإعدادات -->
+                <section id="settings" class="section">
+                    <h2>الإعدادات</h2>
+                    
+                    <div class="form-group">
+                        <label>مزامنة البيانات</label>
+                        <button id="forceSync" class="warning">إجبار المزامنة الآن</button>
+                        <p style="font-size: 14px; color: #666;">آخر مزامنة: <span id="lastSyncTime">-</span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>نسخ احتياطي</label>
+                        <button id="exportData" class="success">تصدير البيانات</button>
+                        <button id="importData" class="warning">استيراد البيانات</button>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>إعدادات أخرى</label>
+                        <div>
+                            <input type="checkbox" id="notifications" checked>
+                            <label for="notifications" style="display: inline;">تفعيل التنبيهات للمخزون المنخفض</label>
+                        </div>
+                    </div>
+                </section>
             </div>
-            
-            <h2>أكثر المنتجات حركة</h2>
-            <table id="topProductsTable">
-                <thead>
-                    <tr>
-                        <th>المنتج</th>
-                        <th>إجمالي الدخل</th>
-                        <th>إجمالي الخروج</th>
-                        <th>صافي الحركة</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- سيتم ملؤها بواسطة JavaScript -->
-                </tbody>
-            </table>
-        </section>
+        </div>
     </div>
 
     <script>
-        // بيانات التخزين
-        let products = JSON.parse(localStorage.getItem('warehouse_products')) || [];
-        let transactions = JSON.parse(localStorage.getItem('warehouse_transactions')) || [];
+        // تهيئة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwYrvLqM6a7z2X6Q6q3q3q3q3q3q3q3q3q3",
+            authDomain: "inventory-system-12345.firebaseapp.com",
+            projectId: "inventory-system-12345",
+            storageBucket: "inventory-system-12345.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123def456"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // بيانات التطبيق
+        let products = [];
+        let transactions = [];
+        let user = null;
+        let isOnline = navigator.onLine;
+        let unsyncedChanges = false;
         
         // عناصر DOM
         const alertBox = document.getElementById('alertBox');
         const navButtons = document.querySelectorAll('.nav-btn');
         const sections = document.querySelectorAll('.section');
+        const loginSection = document.getElementById('loginSection');
+        const registerSection = document.getElementById('registerSection');
+        const mainApp = document.getElementById('mainApp');
+        const userNameSpan = document.getElementById('userName');
+        const syncStatusSpan = document.getElementById('syncStatus');
+        const syncIndicator = document.getElementById('syncIndicator');
+        const offlineWarning = document.getElementById('offlineWarning');
+        const lastUpdateSpan = document.getElementById('lastUpdate');
+        const lastSyncTimeSpan = document.getElementById('lastSyncTime');
+        
+        // التحقق من حالة الاتصال
+        window.addEventListener('online', () => {
+            isOnline = true;
+            offlineWarning.style.display = 'none';
+            if (unsyncedChanges) {
+                syncData();
+            }
+        });
+        
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            offlineWarning.style.display = 'block';
+            updateSyncStatus(false, "غير متصل بالإنترنت");
+        });
+        
+        // تحديث حالة المزامنة
+        function updateSyncStatus(synced, message) {
+            if (synced) {
+                syncIndicator.className = 'sync-indicator synced';
+                syncStatusSpan.textContent = 'مزامنة كاملة';
+                unsyncedChanges = false;
+            } else {
+                syncIndicator.className = 'sync-indicator not-synced';
+                syncStatusSpan.textContent = message || 'يوجد بيانات غير مزامنة';
+                unsyncedChanges = true;
+            }
+        }
+        
+        // تسجيل الدخول
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showAlert('يرجى إدخال البريد الإلكتروني وكلمة المرور', 'danger');
+                return;
+            }
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    user = userCredential.user;
+                    loadUserData();
+                })
+                .catch((error) => {
+                    showAlert('خطأ في تسجيل الدخول: ' + error.message, 'danger');
+                });
+        });
+        
+        // إنشاء حساب
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value;
+            
+            if (!email || !password || !name) {
+                showAlert('يرجى ملء جميع الحقول', 'danger');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'danger');
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    user = userCredential.user;
+                    
+                    // حفظ معلومات المستخدم الإضافية
+                    return db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    showAlert('تم إنشاء الحساب بنجاح', 'success');
+                    loadUserData();
+                })
+                .catch((error) => {
+                    showAlert('خطأ في إنشاء الحساب: ' + error.message, 'danger');
+                });
+        });
+        
+        // التبديل بين تسجيل الدخول وإنشاء حساب
+        document.getElementById('showRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginSection.style.display = 'none';
+            registerSection.style.display = 'block';
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            registerSection.style.display = 'none';
+            loginSection.style.display = 'block';
+        });
+        
+        // تسجيل الخروج
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                user = null;
+                products = [];
+                transactions = [];
+                loginSection.style.display = 'block';
+                mainApp.style.display = 'none';
+            });
+        });
+        
+        // تحميل بيانات المستخدم
+        function loadUserData() {
+            if (!user) return;
+            
+            userNameSpan.textContent = user.displayName || user.email;
+            loginSection.style.display = 'none';
+            registerSection.style.display = 'none';
+            mainApp.style.display = 'block';
+            
+            // تحميل البيانات من Firebase
+            loadDataFromFirebase();
+        }
+        
+        // تحميل البيانات من Firebase
+        function loadDataFromFirebase() {
+            if (!user) return;
+            
+            // تحميل المنتجات
+            db.collection('users').doc(user.uid).collection('products')
+                .get()
+                .then((querySnapshot) => {
+                    products = [];
+                    querySnapshot.forEach((doc) => {
+                        products.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    // تحميل الحركات
+                    return db.collection('users').doc(user.uid).collection('transactions')
+                        .orderBy('date', 'desc')
+                        .get();
+                })
+                .then((querySnapshot) => {
+                    transactions = [];
+                    querySnapshot.forEach((doc) => {
+                        transactions.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    updateSyncStatus(true);
+                    updateLastUpdateTime();
+                    initApp();
+                })
+                .catch((error) => {
+                    console.error("Error loading data: ", error);
+                    showAlert('خطأ في تحميل البيانات', 'danger');
+                    
+                    // محاولة استخدام البيانات المحلية إذا فشل التحميل
+                    loadFromLocalStorage();
+                });
+        }
+        
+        // حفظ البيانات إلى Firebase
+        function saveDataToFirebase() {
+            if (!user || !isOnline) {
+                updateSyncStatus(false, "في انتظار الاتصال");
+                saveToLocalStorage();
+                return;
+            }
+            
+            const batch = db.batch();
+            
+            // حفظ المنتجات
+            products.forEach((product) => {
+                const productRef = db.collection('users').doc(user.uid).collection('products').doc(product.id);
+                batch.set(productRef, product);
+            });
+            
+            // حفظ الحركات
+            transactions.forEach((transaction) => {
+                const transactionRef = db.collection('users').doc(user.uid).collection('transactions').doc(transaction.id);
+                batch.set(transactionRef, transaction);
+            });
+            
+            batch.commit()
+                .then(() => {
+                    updateSyncStatus(true);
+                    updateLastUpdateTime();
+                    saveToLocalStorage();
+                })
+                .catch((error) => {
+                    console.error("Error saving data: ", error);
+                    updateSyncStatus(false, "خطأ في المزامنة");
+                    saveToLocalStorage();
+                });
+        }
+        
+        // حفظ البيانات محلياً
+        function saveToLocalStorage() {
+            if (!user) return;
+            
+            localStorage.setItem(`warehouse_products_${user.uid}`, JSON.stringify(products));
+            localStorage.setItem(`warehouse_transactions_${user.uid}`, JSON.stringify(transactions));
+            localStorage.setItem(`warehouse_lastUpdate_${user.uid}`, new Date().toISOString());
+        }
+        
+        // تحميل البيانات من التخزين المحلي
+        function loadFromLocalStorage() {
+            if (!user) return;
+            
+            const storedProducts = localStorage.getItem(`warehouse_products_${user.uid}`);
+            const storedTransactions = localStorage.getItem(`warehouse_transactions_${user.uid}`);
+            const lastUpdate = localStorage.getItem(`warehouse_lastUpdate_${user.uid}`);
+            
+            if (storedProducts) {
+                products = JSON.parse(storedProducts);
+            }
+            
+            if (storedTransactions) {
+                transactions = JSON.parse(storedTransactions);
+            }
+            
+            if (lastUpdate) {
+                lastUpdateSpan.textContent = new Date(lastUpdate).toLocaleString();
+            }
+            
+            updateSyncStatus(false, "يستخدم بيانات محلية");
+            initApp();
+        }
+        
+        // تحديث وقت آخر تحديث
+        function updateLastUpdateTime() {
+            const now = new Date();
+            lastUpdateSpan.textContent = now.toLocaleString();
+            lastSyncTimeSpan.textContent = now.toLocaleString();
+        }
+        
+        // إجبار المزامنة
+        document.getElementById('forceSync').addEventListener('click', () => {
+            if (!isOnline) {
+                showAlert('غير متصل بالإنترنت. لا يمكن المزامنة.', 'warning');
+                return;
+            }
+            
+            showAlert('جاري مزامنة البيانات...', 'success');
+            saveDataToFirebase();
+        });
+        
+        // تصدير البيانات
+        document.getElementById('exportData').addEventListener('click', () => {
+            const data = {
+                products: products,
+                transactions: transactions,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `inventory_backup_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showAlert('تم تصدير البيانات بنجاح', 'success');
+        });
+        
+        // استيراد البيانات
+        document.getElementById('importData').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
+        
+        document.getElementById('importFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.products && data.transactions) {
+                        products = data.products;
+                        transactions = data.transactions;
+                        
+                        saveDataToFirebase();
+                        initApp();
+                        
+                        showAlert('تم استيراد البيانات بنجاح', 'success');
+                    } else {
+                        showAlert('ملف غير صالح', 'danger');
+                    }
+                } catch (error) {
+                    showAlert('خطأ في قراءة الملف', 'danger');
+                }
+            };
+            reader.readAsText(file);
+        });
+        
+        // استمرارية الكود الأصلي مع التعديلات اللازمة للربط مع Firebase
+        // [يتبع الكود الأصلي مع تعديل الدوال لحفظ البيانات في Firebase بدلاً من localStorage فقط]
+        
+        // بدء التطبيق بعد تحميل البيانات
+        function initApp() {
+            updateProductsTable();
+            updateProductSelects();
+            updateDashboard();
+            updateTransactions();
+            updateReports();
+        }
+        
+        // الباقي من الكود الأصلي مع تعديل الدوال لاستخدام saveDataToFirebase بدلاً من localStorage مباشرة
+        // ... [الكود السابق مع التعديلات]
         
         // عرض التنبيهات
         function showAlert(message, type = 'success') {
@@ -610,7 +1132,7 @@
             }
             
             // حفظ البيانات وتحديث الواجهة
-            localStorage.setItem('warehouse_products', JSON.stringify(products));
+            saveDataToFirebase();
             updateProductsTable();
             updateDashboard();
             productForm.reset();
@@ -656,7 +1178,7 @@
                     }
                     
                     products.splice(index, 1);
-                    localStorage.setItem('warehouse_products', JSON.stringify(products));
+                    saveDataToFirebase();
                     updateProductsTable();
                     updateDashboard();
                     showAlert('تم حذف المنتج بنجاح');
@@ -713,9 +1235,7 @@
             transactions.push(transaction);
             
             // حفظ البيانات
-            localStorage.setItem('warehouse_products', JSON.stringify(products));
-            localStorage.setItem('warehouse_transactions', JSON.stringify(transactions));
-            
+            saveDataToFirebase();
             showAlert('تم تسجيل الحركة بنجاح');
             transactionForm.reset();
             updateProductsTable();
@@ -725,13 +1245,23 @@
         // تحديث سجل الحركات
         function updateTransactions() {
             const filterProduct = document.getElementById('filterProduct');
+            const filterDate = document.getElementById('filterDate');
             const transactionsTable = document.getElementById('transactionsTable').querySelector('tbody');
             
             let filteredTransactions = transactions;
             
             // تطبيق التصفية حسب المنتج إذا تم اختياره
             if (filterProduct.value) {
-                filteredTransactions = transactions.filter(t => t.productId === filterProduct.value);
+                filteredTransactions = filteredTransactions.filter(t => t.productId === filterProduct.value);
+            }
+            
+            // تطبيق التصفية حسب التاريخ إذا تم اختياره
+            if (filterDate.value) {
+                const selectedDate = new Date(filterDate.value);
+                filteredTransactions = filteredTransactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.toDateString() === selectedDate.toDateString();
+                });
             }
             
             // عرض الحركات
@@ -755,6 +1285,7 @@
         
         // تصفية الحركات حسب المنتج
         document.getElementById('filterProduct').addEventListener('change', updateTransactions);
+        document.getElementById('filterDate').addEventListener('change', updateTransactions);
         
         // تحديث التقارير
         function updateReports() {
@@ -804,116 +1335,63 @@
                 `;
                 topProductsTable.appendChild(row);
             });
-        }
-        
-        // تهيئة البيانات الأولية إذا لم توجد
-        function initializeData() {
-            if (products.length === 0) {
-                // إضافة بعض المنتجات الافتراضية
-                products = [
-                    {
-                        id: '1',
-                        name: 'جهاز كمبيوتر',
-                        description: 'جهاز كمpiوتر مكتبي',
-                        category: 'إلكترونيات',
-                        price: 2500,
-                        quantity: 10,
-                        alertQuantity: 2
-                    },
-                    {
-                        id: '2',
-                        name: 'طابعة',
-                        description: 'طابعة ليزر ملونة',
-                        category: 'إلكترونيات',
-                        price: 1200,
-                        quantity: 5,
-                        alertQuantity: 2
-                    },
-                    {
-                        id: '3',
-                        name: 'كرسي مكتب',
-                        description: 'كرسي مكتب مريح',
-                        category: 'أثاث',
-                        price: 500,
-                        quantity: 15,
-                        alertQuantity: 3
-                    }
-                ];
-                
-                localStorage.setItem('warehouse_products', JSON.stringify(products));
-            }
             
-            if (transactions.length === 0) {
-                // إضافة بعض الحركات الافتراضية
-                transactions = [
-                    {
-                        id: '1',
-                        date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                        type: 'in',
-                        productId: '1',
-                        productName: 'جهاز كمبيوتر',
-                        quantity: 10,
-                        notes: 'شحنة جديدة'
-                    },
-                    {
-                        id: '2',
-                        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                        type: 'in',
-                        productId: '2',
-                        productName: 'طابعة',
-                        quantity: 5,
-                        notes: 'شحنة طابعات'
-                    },
-                    {
-                        id: '3',
-                        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-                        type: 'in',
-                        productId: '3',
-                        productName: 'كرسي مكتب',
-                        quantity: 15,
-                        notes: 'شحنة كراسي'
-                    },
-                    {
-                        id: '4',
-                        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                        type: 'out',
-                        productId: '1',
-                        productName: 'جهاز كمبيوتر',
-                        quantity: 3,
-                        notes: 'طلب من قسم المبيعات'
-                    }
-                ];
+            // تقرير القيمة الإجمالية حسب الفئة
+            const categoryStats = {};
+            
+            products.forEach(product => {
+                const category = product.category || 'بدون فئة';
+                if (!categoryStats[category]) {
+                    categoryStats[category] = {
+                        count: 0,
+                        value: 0
+                    };
+                }
                 
-                localStorage.setItem('warehouse_transactions', JSON.stringify(transactions));
-                
-                // تحديث كميات المنتجات بناءً على الحركات
-                transactions.forEach(transaction => {
-                    const product = products.find(p => p.id === transaction.productId);
-                    if (product) {
-                        if (transaction.type === 'in') {
-                            product.quantity += transaction.quantity;
-                        } else {
-                            product.quantity -= transaction.quantity;
-                        }
-                    }
-                });
-                
-                localStorage.setItem('warehouse_products', JSON.stringify(products));
+                categoryStats[category].count += 1;
+                categoryStats[category].value += product.price * product.quantity;
+            });
+            
+            const valueReportTable = document.getElementById('valueReportTable').querySelector('tbody');
+            valueReportTable.innerHTML = '';
+            
+            Object.entries(categoryStats).forEach(([category, stats]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${category}</td>
+                    <td>${stats.count}</td>
+                    <td>${stats.value.toFixed(2)}</td>
+                `;
+                valueReportTable.appendChild(row);
+            });
+            
+            // أعلى منتج مبيعاً
+            let topProduct = null;
+            let maxSales = 0;
+            
+            Object.values(productStats).forEach(stats => {
+                if (stats.out > maxSales) {
+                    maxSales = stats.out;
+                    topProduct = stats.name;
+                }
+            });
+            
+            document.getElementById('topProduct').textContent = topProduct || '-';
+        }
+        
+        // الاستماع لتغييرات حالة المصادقة
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                window.user = user;
+                loadUserData();
+            } else {
+                // User is signed out
+                window.user = null;
+                loginSection.style.display = 'block';
+                mainApp.style.display = 'none';
             }
-        }
-        
-        // تهيئة التطبيق
-        function initApp() {
-            initializeData();
-            updateProductsTable();
-            updateProductSelects();
-            updateDashboard();
-            updateTransactions();
-            updateReports();
-        }
-        
-        // بدء التطبيق
-        initApp();
+        });
     </script>
 </body>
 </html>
