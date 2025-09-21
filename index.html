@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة المستودعات - بدون تسجيل دخول</title>
+    <title>نظام إدارة المستودعات - التواصل</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase Authentication (تمت إزالته) -->
     <style>
         :root {
             --primary: #2c3e50;
@@ -762,7 +767,7 @@
 </head>
 <body>
     <!-- التطبيق الرئيسي -->
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
         <!-- الشريط الجانبي -->
         <div class="sidebar">
             <div class="sidebar-header">
@@ -788,12 +793,16 @@
                 <div class="user-menu">
                     <div class="user-info">
                         <div class="user-avatar" id="userAvatar">م</div>
-                        <div class="user-name" id="userName">مستخدم</div>
+                        <div class="user-name" id="userName">مستخدم النظام</div>
                     </div>
                     <button class="btn btn-primary" id="notificationsBtn">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
                     </button>
+                    <div class="sync-status" id="syncStatus">
+                        <span>مزامنة</span>
+                        <div class="sync-indicator"></div>
+                    </div>
                 </div>
             </div>
 
@@ -897,4 +906,858 @@
                         <div id="stockAlerts">
                             <!-- سيتم ملؤها بواسطة JavaScript -->
                         </div>
-                        <button class="btn btn-primary" style="width: 100%; margin-top
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-eye"></i> عرض كل التنبيهات
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم الدردشة -->
+            <div class="section-content" id="chat">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title"><i class="fas fa-comments"></i> الدردشة والتواصل</h2>
+                    </div>
+                    
+                    <div class="chat-tabs">
+                        <div class="chat-tab active" data-tab="general">الدردشة العامة</div>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-sidebar">
+                            <div class="chat-users" id="chatUsers">
+                                <h4 style="margin-bottom: 15px;">المستخدمون</h4>
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="chat-main">
+                            <div class="chat-header">
+                                <div id="currentChatInfo">
+                                    <h4>الدردشة العامة</h4>
+                                    <p>محادثة مع جميع المستخدمين</p>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-messages" id="chatMessages">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </div>
+                            
+                            <div class="chat-input">
+                                <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+                                <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم الدعم الفني -->
+            <div class="section-content" id="support">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title"><i class="fas fa-headset"></i> الدعم الفني</h2>
+                        <button class="btn btn-success" id="newTicketBtn"><i class="fas fa-plus"></i> تذكرة جديدة</button>
+                    </div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" data-tab="myTickets">التذاكر</div>
+                        <div class="tab" data-tab="allTickets">جميع التذاكر</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="myTickets">
+                        <div id="supportTickets">
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="allTickets">
+                        <div id="allSupportTickets">
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- باقي الأقسام (إدارة المنتجات، حركة المستودع، سجل الحركات، التقارير، الإعدادات) -->
+            <!-- ... سيتم تضمينها كما هي في الكود السابق ... -->
+
+        </div>
+    </div>
+
+    <!-- نموذج إضافة تذكرة دعم فني -->
+    <div class="modal" id="ticketModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-plus"></i> تذكرة دعم فني جديدة</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ticketTitle">عنوان التذكرة</label>
+                    <input type="text" class="form-control" id="ticketTitle" placeholder="أدخل عنوانًا واضحًا للمشكلة">
+                </div>
+                <div class="form-group">
+                    <label for="ticketCategory">نوع المشكلة</label>
+                    <select class="form-control" id="ticketCategory">
+                        <option value="technical">مشكلة فنية</option>
+                        <option value="bug">بلاغ عن خطأ</option>
+                        <option value="feature">طلب ميزة جديدة</option>
+                        <option value="other">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ticketDescription">وصف المشكلة</label>
+                    <textarea class="form-control" id="ticketDescription" rows="4" placeholder="صف المشكلة بالتفصيل"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ticketPriority">أولوية المشكلة</label>
+                    <select class="form-control" id="ticketPriority">
+                        <option value="low">منخفضة</option>
+                        <option value="medium">متوسطة</option>
+                        <option value="high">عالية</option>
+                        <option value="urgent">عاجلة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" id="saveTicket" style="width: 100%;">إرسال التذكرة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج عرض تذكرة -->
+    <div class="modal" id="viewTicketModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-ticket-alt"></i> تفاصيل التذكرة</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ticket-header">
+                    <h4 id="ticketViewTitle">عنوان التذكرة</h4>
+                    <span class="ticket-status" id="ticketViewStatus">مفتوحة</span>
+                </div>
+                <div class="ticket-meta">
+                    <span id="ticketViewAuthor">بواسطة: مستخدم النظام</span>
+                    <span> | </span>
+                    <span id="ticketViewDate">تاريخ الإنشاء: 2023-10-05</span>
+                    <span> | </span>
+                    <span id="ticketViewPriority">الأولوية: عالية</span>
+                </div>
+                <div class="form-group">
+                    <label>وصف المشكلة</label>
+                    <div class="ticket-description" id="ticketViewDescription">
+                        وصف المشكلة هنا...
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>التعليقات</label>
+                    <div class="ticket-comments" id="ticketComments">
+                        <!-- سيتم ملؤها بواسطة JavaScript -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>إضافة تعليق</label>
+                    <textarea class="form-control" id="ticketComment" rows="3" placeholder="أضف تعليقك هنا"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="addCommentBtn">إضافة تعليق</button>
+                    <button class="btn btn-danger" id="closeTicketBtn">إغلاق التذكرة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج الإشعارات -->
+    <div class="modal" id="notificationsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-bell"></i> الإشعارات</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="notificationsList">
+                    <!-- سيتم ملؤها بواسطة JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- سيتم تضمين النماذج الأخرى من الكود السابق هنا -->
+
+    <script>
+        // تهيئة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwYrvLqM6a7z2X6Q6q3q3q3q3q3q3q3q3",
+            authDomain: "inventory-system-12345.firebaseapp.com",
+            projectId: "inventory-system-12345",
+            storageBucket: "inventory-system-12345.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123def456"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // بيانات التطبيق
+        let products = [];
+        let transactions = [];
+        let settings = { alertThreshold: 5 };
+        let users = [];
+        let chatMessages = [];
+        let supportTickets = [];
+        let notifications = [];
+        let currentChat = 'general';
+        
+        // عناصر DOM
+        const appContainer = document.getElementById('appContainer');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const menuLinks = document.querySelectorAll('.sidebar-menu a');
+        const sectionContents = document.querySelectorAll('.section-content');
+        const pageTitle = document.querySelector('.page-title');
+        const chatUsers = document.getElementById('chatUsers');
+        const chatMessagesContainer = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const chatTabs = document.querySelectorAll('.chat-tab');
+        const currentChatInfo = document.getElementById('currentChatInfo');
+        const supportTicketsContainer = document.getElementById('supportTickets');
+        const allSupportTicketsContainer = document.getElementById('allSupportTickets');
+        const newTicketBtn = document.getElementById('newTicketBtn');
+        const ticketTabs = document.querySelectorAll('.tab');
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const notificationCount = document.getElementById('notificationCount');
+        const notificationsModal = document.getElementById('notificationsModal');
+        const notificationsList = document.getElementById('notificationsList');
+        
+        // تحميل بيانات التطبيق
+        async function loadAppData() {
+            try {
+                // تحميل المنتجات
+                const productsSnapshot = await db.collection('products').get();
+                products = [];
+                productsSnapshot.forEach(doc => {
+                    products.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // تحميل الحركات
+                const transactionsSnapshot = await db.collection('transactions')
+                    .orderBy('date', 'desc').get();
+                transactions = [];
+                transactionsSnapshot.forEach(doc => {
+                    transactions.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // تحميل الإعدادات
+                const settingsDoc = await db.collection('settings').doc('app').get();
+                if (settingsDoc.exists) {
+                    settings = settingsDoc.data();
+                }
+                
+                // تحميل المستخدمين
+                await loadUsers();
+                
+                // تحميل الإشعارات
+                await loadNotifications();
+                
+                // بدء الاستماع للدردشات
+                setupChatListeners();
+                
+                // بدء الاستماع لتذاكر الدعم الفني
+                setupSupportTicketListeners();
+                
+                // تحديث الواجهة
+                initApp();
+                
+            } catch (error) {
+                console.error('خطأ في تحميل البيانات:', error);
+            }
+        }
+        
+        // تحميل المستخدمين
+        async function loadUsers() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                users = [];
+                usersSnapshot.forEach(doc => {
+                    users.push({ id: doc.id, ...doc.data() });
+                });
+                
+                updateUsersList();
+            } catch (error) {
+                console.error('خطأ في تحميل المستخدمين:', error);
+            }
+        }
+        
+        // تحديث قائمة المستخدمين
+        function updateUsersList() {
+            chatUsers.innerHTML = '<h4 style="margin-bottom: 15px;">المستخدمون</h4>';
+            
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'chat-user';
+                userElement.setAttribute('data-id', user.id);
+                userElement.innerHTML = `
+                    <div class="chat-user-avatar">${user.name.charAt(0)}</div>
+                    <div class="chat-user-info">
+                        <div class="chat-user-name">${user.name}</div>
+                        <div class="chat-user-status ${user.isOnline ? '' : 'offline'}">${user.isOnline ? 'متصل' : 'غير متصل'}</div>
+                    </div>
+                `;
+                
+                chatUsers.appendChild(userElement);
+            });
+        }
+        
+        // إعداد مستمعي الدردشة
+        function setupChatListeners() {
+            // الاستماع للدردشة العامة
+            db.collection('chat').doc('general')
+                .collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    chatMessages = [];
+                    snapshot.forEach(doc => {
+                        chatMessages.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    if (currentChat === 'general') {
+                        updateChatMessages();
+                    }
+                });
+        }
+        
+        // تحديث رسائل الدردشة
+        function updateChatMessages() {
+            chatMessagesContainer.innerHTML = '';
+            
+            const messagesToShow = chatMessages;
+            
+            messagesToShow.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${message.senderId === 'current-user' ? 'sent' : 'received'}`;
+                
+                const senderName = message.senderId === 'current-user' ? 'أنت' : 
+                                 users.find(u => u.id === message.senderId)?.name || 'مستخدم';
+                
+                messageElement.innerHTML = `
+                    <div class="message-bubble">${message.text}</div>
+                    <div class="message-info">${senderName} - ${new Date(message.timestamp?.toDate()).toLocaleTimeString()}</div>
+                `;
+                
+                chatMessagesContainer.appendChild(messageElement);
+            });
+            
+            // التمرير إلى أحدث رسالة
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+        
+        // إرسال رسالة
+        sendMessageBtn.addEventListener('click', async () => {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            
+            try {
+                const messageData = {
+                    text: text,
+                    senderId: 'current-user',
+                    senderName: userName.textContent,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                if (currentChat === 'general') {
+                    // إرسال رسالة عامة
+                    await db.collection('chat').doc('general')
+                        .collection('messages')
+                        .add(messageData);
+                }
+                
+                messageInput.value = '';
+                
+            } catch (error) {
+                console.error('خطأ في إرسال الرسالة:', error);
+                alert('حدث خطأ أثناء إرسال الرسالة');
+            }
+        });
+        
+        // إدخال الرسالة بالضغط على Enter
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessageBtn.click();
+            }
+        });
+        
+        // إعداد مستمعي تذاكر الدعم الفني
+        function setupSupportTicketListeners() {
+            // الاستماع لجميع التذاكر
+            db.collection('supportTickets')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    supportTickets = [];
+                    snapshot.forEach(doc => {
+                        supportTickets.push({ id: doc.id, ...doc.data() });
+                    });
+                    updateSupportTickets();
+                    updateAllSupportTickets(supportTickets);
+                });
+        }
+        
+        // تحديث تذاكر الدعم الفني
+        function updateSupportTickets() {
+            supportTicketsContainer.innerHTML = '';
+            
+            if (supportTickets.length === 0) {
+                supportTicketsContainer.innerHTML = '<p>لا توجد تذاكر دعم فني</p>';
+                return;
+            }
+            
+            supportTickets.forEach(ticket => {
+                const ticketElement = document.createElement('div');
+                ticketElement.className = 'support-ticket';
+                ticketElement.innerHTML = `
+                    <div class="ticket-header">
+                        <div class="ticket-title">${ticket.title}</div>
+                        <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'مفتوحة' : 'مغلقة'}</span>
+                    </div>
+                    <div class="ticket-meta">
+                        <span>النوع: ${getTicketCategoryName(ticket.category)}</span>
+                        <span> | </span>
+                        <span>الأولوية: ${getTicketPriorityName(ticket.priority)}</span>
+                        <span> | </span>
+                        <span>التاريخ: ${new Date(ticket.createdAt?.toDate()).toLocaleDateString()}</span>
+                    </div>
+                    <div class="ticket-actions">
+                        <button class="btn btn-primary view-ticket" data-id="${ticket.id}">عرض</button>
+                    </div>
+                `;
+                
+                supportTicketsContainer.appendChild(ticketElement);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار العرض
+            document.querySelectorAll('.view-ticket').forEach(button => {
+                button.addEventListener('click', () => {
+                    const ticketId = button.getAttribute('data-id');
+                    viewTicket(ticketId);
+                });
+            });
+        }
+        
+        // تحديث جميع تذاكر الدعم الفني
+        function updateAllSupportTickets(tickets) {
+            allSupportTicketsContainer.innerHTML = '';
+            
+            if (tickets.length === 0) {
+                allSupportTicketsContainer.innerHTML = '<p>لا توجد تذاكر دعم فني</p>';
+                return;
+            }
+            
+            tickets.forEach(ticket => {
+                const ticketElement = document.createElement('div');
+                ticketElement.className = 'support-ticket';
+                ticketElement.innerHTML = `
+                    <div class="ticket-header">
+                        <div class="ticket-title">${ticket.title}</div>
+                        <span class="ticket-status ${ticket.status}">${ticket.status === 'open' ? 'مفتوحة' : 'مغلقة'}</span>
+                    </div>
+                    <div class="ticket-meta">
+                        <span>بواسطة: ${ticket.authorName || 'مستخدم'}</span>
+                        <span> | </span>
+                        <span>النوع: ${getTicketCategoryName(ticket.category)}</span>
+                        <span> | </span>
+                        <span>الأولوية: ${getTicketPriorityName(ticket.priority)}</span>
+                        <span> | </span>
+                        <span>التاريخ: ${new Date(ticket.createdAt?.toDate()).toLocaleDateString()}</span>
+                    </div>
+                    <div class="ticket-actions">
+                        <button class="btn btn-primary view-ticket" data-id="${ticket.id}">عرض</button>
+                    </div>
+                `;
+                
+                allSupportTicketsContainer.appendChild(ticketElement);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار العرض
+            document.querySelectorAll('.view-ticket').forEach(button => {
+                button.addEventListener('click', () => {
+                    const ticketId = button.getAttribute('data-id');
+                    viewTicket(ticketId);
+                });
+            });
+        }
+        
+        // تحميل التذكرة للعرض
+        async function viewTicket(ticketId) {
+            try {
+                const ticketDoc = await db.collection('supportTickets').doc(ticketId).get();
+                if (ticketDoc.exists) {
+                    const ticket = { id: ticketDoc.id, ...ticketDoc.data() };
+                    
+                    // عرض بيانات التذكرة في النموذج
+                    document.getElementById('ticketViewTitle').textContent = ticket.title;
+                    document.getElementById('ticketViewStatus').textContent = ticket.status === 'open' ? 'مفتوحة' : 'مغلقة';
+                    document.getElementById('ticketViewStatus').className = `ticket-status ${ticket.status}`;
+                    document.getElementById('ticketViewAuthor').textContent = `بواسطة: ${ticket.authorName || 'مستخدم'}`;
+                    document.getElementById('ticketViewDate').textContent = `تاريخ الإنشاء: ${new Date(ticket.createdAt?.toDate()).toLocaleDateString()}`;
+                    document.getElementById('ticketViewPriority').textContent = `الأولوية: ${getTicketPriorityName(ticket.priority)}`;
+                    document.getElementById('ticketViewDescription').textContent = ticket.description;
+                    
+                    // تحميل التعليقات
+                    const commentsSnapshot = await db.collection('supportTickets').doc(ticketId)
+                        .collection('comments')
+                        .orderBy('timestamp', 'asc')
+                        .get();
+                    
+                    const commentsContainer = document.getElementById('ticketComments');
+                    commentsContainer.innerHTML = '';
+                    
+                    commentsSnapshot.forEach(doc => {
+                        const comment = doc.data();
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'ticket-comment';
+                        commentElement.innerHTML = `
+                            <div><strong>${comment.authorName || 'مستخدم'}:</strong> ${comment.text}</div>
+                            <div class="ticket-meta">${new Date(comment.timestamp?.toDate()).toLocaleString()}</div>
+                        `;
+                        commentsContainer.appendChild(commentElement);
+                    });
+                    
+                    // إظهار النموذج
+                    document.getElementById('viewTicketModal').style.display = 'flex';
+                    
+                    // إعداد أزرار التفاعل
+                    document.getElementById('addCommentBtn').onclick = () => addComment(ticketId);
+                    document.getElementById('closeTicketBtn').onclick = () => closeTicket(ticketId);
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل التذكرة:', error);
+                alert('حدث خطأ أثناء تحميل التذكرة');
+            }
+        }
+        
+        // إضافة تعليق على التذكرة
+        async function addComment(ticketId) {
+            const commentText = document.getElementById('ticketComment').value.trim();
+            if (!commentText) return;
+            
+            try {
+                await db.collection('supportTickets').doc(ticketId)
+                    .collection('comments')
+                    .add({
+                        text: commentText,
+                        authorId: 'current-user',
+                        authorName: userName.textContent,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                
+                document.getElementById('ticketComment').value = '';
+                
+                // إعادة تحميل التعليقات
+                viewTicket(ticketId);
+                
+            } catch (error) {
+                console.error('خطأ في إضافة التعليق:', error);
+                alert('حدث خطأ أثناء إضافة التعليق');
+            }
+        }
+        
+        // إغلاق التذكرة
+        async function closeTicket(ticketId) {
+            try {
+                await db.collection('supportTickets').doc(ticketId).update({
+                    status: 'closed',
+                    closedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('تم إغلاق التذكرة بنجاح');
+                document.getElementById('viewTicketModal').style.display = 'none';
+                
+            } catch (error) {
+                console.error('خطأ في إغلاق التذكرة:', error);
+                alert('حدث خطأ أثناء إغلاق التذكرة');
+            }
+        }
+        
+        // تحميل الإشعارات
+        async function loadNotifications() {
+            try {
+                const snapshot = await db.collection('notifications')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                notifications = [];
+                snapshot.forEach(doc => {
+                    notifications.push({ id: doc.id, ...doc.data() });
+                });
+                
+                updateNotificationCount();
+                
+                // بدء الاستماع للإشعارات الجديدة
+                db.collection('notifications')
+                    .orderBy('timestamp', 'desc')
+                    .onSnapshot(snapshot => {
+                        notifications = [];
+                        snapshot.forEach(doc => {
+                            notifications.push({ id: doc.id, ...doc.data() });
+                        });
+                        
+                        updateNotificationCount();
+                    });
+                    
+            } catch (error) {
+                console.error('خطأ في تحميل الإشعارات:', error);
+            }
+        }
+        
+        // تحديث عدد الإشعارات
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            
+            if (unreadCount > 0) {
+                notificationCount.textContent = unreadCount;
+                notificationCount.style.display = 'inline';
+            } else {
+                notificationCount.style.display = 'none';
+            }
+        }
+        
+        // عرض الإشعارات
+        notificationsBtn.addEventListener('click', () => {
+            notificationsList.innerHTML = '';
+            
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = '<p>لا توجد إشعارات</p>';
+            } else {
+                notifications.forEach(notification => {
+                    const notificationElement = document.createElement('div');
+                    notificationElement.className = `alert ${notification.read ? 'alert-info' : 'alert-warning'}`;
+                    notificationElement.innerHTML = `
+                        <div>
+                            <strong>${notification.title}</strong>
+                            <p>${notification.message}</p>
+                            <small>${new Date(notification.timestamp?.toDate()).toLocaleString()}</small>
+                        </div>
+                    `;
+                    
+                    notificationsList.appendChild(notificationElement);
+                });
+            }
+            
+            notificationsModal.style.display = 'flex';
+        });
+        
+        // وظائف مساعدة
+        function getTicketCategoryName(category) {
+            const categories = {
+                'technical': 'مشكلة فنية',
+                'bug': 'بلاغ عن خطأ',
+                'feature': 'طلب ميزة جديدة',
+                'other': 'أخرى'
+            };
+            return categories[category] || category;
+        }
+        
+        function getTicketPriorityName(priority) {
+            const priorities = {
+                'low': 'منخفضة',
+                'medium': 'متوسطة',
+                'high': 'عالية',
+                'urgent': 'عاجلة'
+            };
+            return priorities[priority] || priority;
+        }
+        
+        // تهيئة التطبيق
+        function initApp() {
+            updateDashboard();
+            updateProductsList();
+            updateTransactionsList();
+            updateInventoryList();
+            updateReports();
+            loadProductOptions();
+            loadSettings();
+            
+            // إعداد أحداث القائمة
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // إزالة النشاط من جميع العناصر
+                    menuLinks.forEach(l => l.classList.remove('active'));
+                    sectionContents.forEach(s => s.classList.remove('active'));
+                    
+                    // إضافة النشاط للعنصر الحالي
+                    link.classList.add('active');
+                    
+                    const section = link.getAttribute('data-section');
+                    document.getElementById(section).classList.add('active');
+                    
+                    // تحديث عنوان الصفحة
+                    const pageTitleText = link.querySelector('span').textContent;
+                    pageTitle.innerHTML = `<i class="${link.querySelector('i').className}"></i> ${pageTitleText}`;
+                });
+            });
+            
+            // إعداد أحداث الإغلاق للنماذج
+            document.querySelectorAll('.close-modal').forEach(button => {
+                button.addEventListener('click', () => {
+                    button.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // إعداد حدث إنشاء تذكرة جديدة
+            newTicketBtn.addEventListener('click', () => {
+                document.getElementById('ticketModal').style.display = 'flex';
+            });
+            
+            // إعداد حدث حفظ التذكرة
+            document.getElementById('saveTicket').addEventListener('click', async () => {
+                const title = document.getElementById('ticketTitle').value;
+                const category = document.getElementById('ticketCategory').value;
+                const description = document.getElementById('ticketDescription').value;
+                const priority = document.getElementById('ticketPriority').value;
+                
+                if (!title || !description) {
+                    alert('يرجى ملء جميع الحقول المطلوبة');
+                    return;
+                }
+                
+                try {
+                    await db.collection('supportTickets').add({
+                        title: title,
+                        category: category,
+                        description: description,
+                        priority: priority,
+                        status: 'open',
+                        authorId: 'current-user',
+                        authorName: userName.textContent,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert('تم إرسال التذكرة بنجاح');
+                    document.getElementById('ticketModal').style.display = 'none';
+                    
+                    // مسح الحقول
+                    document.getElementById('ticketTitle').value = '';
+                    document.getElementById('ticketDescription').value = '';
+                    
+                } catch (error) {
+                    console.error('خطأ في حفظ التذكرة:', error);
+                    alert('حدث خطأ أثناء حفظ التذكرة');
+                }
+            });
+        }
+        
+        // دوال تحديث الواجهة
+        function updateDashboard() {
+            // تحديث الإحصائيات
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalQuantity').textContent = products.reduce((sum, product) => sum + (product.quantity || 0), 0);
+            document.getElementById('lowStockCount').textContent = products.filter(product => product.quantity <= (settings.alertThreshold || 5)).length;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            document.getElementById('todayTransactions').textContent = transactions.filter(transaction => {
+                const transactionDate = transaction.date.toDate();
+                return transactionDate >= today;
+            }).length;
+            
+            // تحديث الحركات الحديثة
+            const recentTransactionsBody = document.getElementById('recentTransactions');
+            recentTransactionsBody.innerHTML = '';
+            
+            transactions.slice(0, 5).forEach(transaction => {
+                const product = products.find(p => p.id === transaction.productId) || { name: 'منتج غير معروف' };
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transaction.id}</td>
+                    <td>${transaction.date.toDate().toLocaleDateString()}</td>
+                    <td>${product.name}</td>
+                    <td>${transaction.type === 'in' ? 'إدخال' : 'إخراج'}</td>
+                    <td>${transaction.quantity}</td>
+                    <td><span class="status-badge status-active">مكتمل</span></td>
+                    <td>
+                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                recentTransactionsBody.appendChild(row);
+            });
+            
+            // تحديث المنتجات الأكثر حركة
+            const topProductsBody = document.getElementById('topProducts');
+            topProductsBody.innerHTML = '';
+            
+            products.slice(0, 5).forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${product.price || 0} ر.س</td>
+                    <td>${product.quantity || 0}</td>
+                    <td>${product.sales || 0}</td>
+                    <td><span class="status-badge ${product.quantity > 0 ? 'status-active' : 'status-inactive'}">${product.quantity > 0 ? 'متوفر' : 'غير متوفر'}</span></td>
+                `;
+                topProductsBody.appendChild(row);
+            });
+            
+            // تحديث تنبيهات المخزون
+            const stockAlertsContainer = document.getElementById('stockAlerts');
+            stockAlertsContainer.innerHTML = '';
+            
+            const lowStockProducts = products.filter(product => product.quantity <= (settings.alertThreshold || 5));
+            
+            if (lowStockProducts.length === 0) {
+                stockAlertsContainer.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> لا توجد تنبيهات للمخزون</div>';
+            } else {
+                lowStockProducts.slice(0, 3).forEach(product => {
+                    const alertElement = document.createElement('div');
+                    alertElement.className = 'alert alert-warning';
+                    alertElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> المنتج ${product.name} منخفض الكمية (${product.quantity} فقط متبقي)`;
+                    stockAlertsContainer.appendChild(alertElement);
+                });
+                
+                if (lowStockProducts.length > 3) {
+                    const moreAlert = document.createElement('div');
+                    moreAlert.className = 'alert alert-info';
+                    moreAlert.innerHTML = `<i class="fas fa-info-circle"></i> وهناك ${lowStockProducts.length - 3} تنبيهات أخرى`;
+                    stockAlertsContainer.appendChild(moreAlert);
+                }
+            }
+        }
+        
+        // دوال أخرى لبقية الأقسام
+        function updateProductsList() {
+            // سيتم تنفيذها لاحقًا
+        }
+        
+        function updateTransactionsList() {
+            // سيتم تنفيذها لاحقًا
+        }
+        
+        function updateInventoryList() {
+            // سيتم تنفيذها لاحقًا
+        }
+        
+        function updateReports() {
+            // سيتم تنفيذها لاحقًا
+        }
+        
+        function loadProductOptions() {
+            // سيتم تنفيذها لاحقًا
+        }
+        
+        function loadSettings() {
+            // سيتم تنفيذها لاحقًا
+        }
+        
+        // بدء تحميل التطبيق
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAppData();
+        });
+    </script>
+</body>
+</html>
