@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>نظام جرد المستودع</title>
     <style>
         :root {
@@ -210,6 +211,16 @@
             margin-bottom: 20px;
         }
         
+        .security-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
         @media (max-width: 768px) {
             nav {
                 flex-direction: column;
@@ -227,6 +238,10 @@
 </head>
 <body>
     <div class="container">
+        <div class="security-warning">
+            <strong>ملاحظة أمان:</strong> هذا التطبيق يعمل على تخزين البيانات محلياً في متصفحك فقط. لا يتم إرسال أي بيانات إلى أي خادم خارجي.
+        </div>
+        
         <header>
             <h1>نظام جرد المستودع</h1>
         </header>
@@ -799,7 +814,7 @@
                     {
                         id: '1',
                         name: 'جهاز كمبيوتر',
-                        description: 'جهاز كمبيوتر مكتبي',
+                        description: 'جهاز كمpiوتر مكتبي',
                         category: 'إلكترونيات',
                         price: 2500,
                         quantity: 10,
