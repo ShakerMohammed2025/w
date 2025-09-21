@@ -501,7 +501,6 @@
                 <li><a href="#" data-section="inventory"><i class="fas fa-exchange-alt"></i> <span>حركة المستودع</span></a></li>
                 <li><a href="#" data-section="transactions"><i class="fas fa-history"></i> <span>سجل الحركات</span></a></li>
                 <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> <span>التقارير</span></a></li>
-                <li><a href="#" data-section="clients"><i class="fas fa-users"></i> <span>العملاء</span></a></li>
                 <li><a href="#" data-section="settings"><i class="fas fa-cog"></i> <span>الإعدادات</span></a></li>
                 <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>تسجيل الخروج</span></a></li>
             </ul>
@@ -530,7 +529,7 @@
                             <i class="fas fa-boxes"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>158</h3>
+                            <h3 id="totalProducts">0</h3>
                             <p>إجمالي المنتجات</p>
                         </div>
                     </div>
@@ -539,7 +538,7 @@
                             <i class="fas fa-box"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>1,245</h3>
+                            <h3 id="totalQuantity">0</h3>
                             <p>الكمية في المخزون</p>
                         </div>
                     </div>
@@ -548,7 +547,7 @@
                             <i class="fas fa-arrow-down"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>28</h3>
+                            <h3 id="lowStockCount">0</h3>
                             <p>منتجات منخفضة</p>
                         </div>
                     </div>
@@ -557,7 +556,7 @@
                             <i class="fas fa-exchange-alt"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>384</h3>
+                            <h3 id="todayTransactions">0</h3>
                             <p>حركات اليوم</p>
                         </div>
                     </div>
@@ -583,67 +582,8 @@
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#TRX-1258</td>
-                                    <td>2023-10-05</td>
-                                    <td>شاشة كمبيوتر 24 بوصة</td>
-                                    <td>دخول</td>
-                                    <td>10</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1257</td>
-                                    <td>2023-10-05</td>
-                                    <td>لوحة مفاتيح</td>
-                                    <td>خروج</td>
-                                    <td>5</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1256</td>
-                                    <td>2023-10-04</td>
-                                    <td>ماوس لاسلكي</td>
-                                    <td>دخول</td>
-                                    <td>20</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1255</td>
-                                    <td>2023-10-04</td>
-                                    <td>سماعات رأس</td>
-                                    <td>خروج</td>
-                                    <td>8</td>
-                                    <td><span class="status-badge status-inactive">ملغى</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1254</td>
-                                    <td>2023-10-03</td>
-                                    <td>كاميرا ويب</td>
-                                    <td>دخول</td>
-                                    <td>15</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="recentTransactions">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -666,42 +606,8 @@
                                         <th>الحالة</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>شاشة كمبيوتر 24 بوصة</td>
-                                        <td>850 ر.س</td>
-                                        <td>45</td>
-                                        <td>125</td>
-                                        <td><span class="status-badge status-active">متوفر</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>لوحة مفاتيح</td>
-                                        <td>120 ر.س</td>
-                                        <td>32</td>
-                                        <td>98</td>
-                                        <td><span class="status-badge status-active">متوفر</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>ماوس لاسلكي</td>
-                                        <td>75 ر.س</td>
-                                        <td>18</td>
-                                        <td>156</td>
-                                        <td><span class="status-badge status-inactive">منخفض</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>سماعات رأس</td>
-                                        <td>200 ر.س</td>
-                                        <td>22</td>
-                                        <td>87</td>
-                                        <td><span class="status-badge status-active">متوفر</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>كاميرا ويب</td>
-                                        <td>180 ر.س</td>
-                                        <td>10</td>
-                                        <td>64</td>
-                                        <td><span class="status-badge status-inactive">منخفض</span></td>
-                                    </tr>
+                                <tbody id="topProducts">
+                                    <!-- سيتم ملؤها بواسطة JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -711,22 +617,9 @@
                         <div class="section-header">
                             <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> تنبيهات المخزون</h2>
                         </div>
-                        
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <div>الماوس اللاسلكي - الكمية منخفضة (18)</div>
+                        <div id="stockAlerts">
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
                         </div>
-                        
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <div>كاميرا ويب - الكمية منخفضة (10)</div>
-                        </div>
-                        
-                        <div class="alert alert-warning">
-                            <i class="fas fa-info-circle"></i>
-                            <div>سماعات الرأس - الكمية متوسطة (22)</div>
-                        </div>
-                        
                         <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">
                             <i class="fas fa-eye"></i> عرض كل التنبيهات
                         </button>
@@ -739,14 +632,13 @@
                 <div class="content-section">
                     <div class="section-header">
                         <h2 class="section-title"><i class="fas fa-boxes"></i> إدارة المنتجات</h2>
-                        <button class="btn btn-success"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
+                        <button class="btn btn-success" id="showProductModal"><i class="fas fa-plus"></i> إضافة منتج جديد</button>
                     </div>
                     
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>صورة</th>
                                     <th>اسم المنتج</th>
                                     <th>الفئة</th>
                                     <th>السعر</th>
@@ -755,72 +647,8 @@
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><div style="width:40px; height:40px; background:#eee; border-radius:5px;"></div></td>
-                                    <td>شاشة كمبيوتر 24 بوصة</td>
-                                    <td>إلكترونيات</td>
-                                    <td>850 ر.س</td>
-                                    <td>45</td>
-                                    <td><span class="status-badge status-active">متوفر</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width:40px; height:40px; background:#eee; border-radius:5px;"></div></td>
-                                    <td>لوحة مفاتيح</td>
-                                    <td>إلكترونيات</td>
-                                    <td>120 ر.س</td>
-                                    <td>32</td>
-                                    <td><span class="status-badge status-active">متوفر</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width:40px; height:40px; background:#eee; border-radius:5px;"></div></td>
-                                    <td>ماوس لاسلكي</td>
-                                    <td>إلكترونيات</td>
-                                    <td>75 ر.س</td>
-                                    <td>18</td>
-                                    <td><span class="status-badge status-inactive">منخفض</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width:40px; height:40px; background:#eee; border-radius:5px;"></div></td>
-                                    <td>سماعات رأس</td>
-                                    <td>إلكترونيات</td>
-                                    <td>200 ر.س</td>
-                                    <td>22</td>
-                                    <td><span class="status-badge status-active">متوفر</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width:40px; height:40px; background:#eee; border-radius:5px;"></div></td>
-                                    <td>كاميرا ويب</td>
-                                    <td>إلكترونيات</td>
-                                    <td>180 ر.س</td>
-                                    <td>10</td>
-                                    <td><span class="status-badge status-inactive">منخفض</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="productsList">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -832,7 +660,7 @@
                 <div class="content-section">
                     <div class="section-header">
                         <h2 class="section-title"><i class="fas fa-exchange-alt"></i> حركة المستودع</h2>
-                        <button class="btn btn-success"><i class="fas fa-plus"></i> إضافة حركة جديدة</button>
+                        <button class="btn btn-success" id="showInventoryModal"><i class="fas fa-plus"></i> إضافة حركة جديدة</button>
                     </div>
                     
                     <div class="table-container">
@@ -844,117 +672,106 @@
                                     <th>المنتج</th>
                                     <th>النوع</th>
                                     <th>الكمية</th>
-                                    <th>المستخدم</th>
                                     <th>الحالة</th>
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#TRX-1258</td>
-                                    <td>2023-10-05 14:30</td>
-                                    <td>شاشة كمبيوتر 24 بوصة</td>
-                                    <td>دخول</td>
-                                    <td>10</td>
-                                    <td>محمد أحمد</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1257</td>
-                                    <td>2023-10-05 13:15</td>
-                                    <td>لوحة مفاتيح</td>
-                                    <td>خروج</td>
-                                    <td>5</td>
-                                    <td>أحمد علي</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1256</td>
-                                    <td>2023-10-04 16:45</td>
-                                    <td>ماوس لاسلكي</td>
-                                    <td>دخول</td>
-                                    <td>20</td>
-                                    <td>فاطمة محمد</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1255</td>
-                                    <td>2023-10-04 11:20</td>
-                                    <td>سماعات رأس</td>
-                                    <td>خروج</td>
-                                    <td>8</td>
-                                    <td>خالد سعيد</td>
-                                    <td><span class="status-badge status-inactive">ملغى</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-1254</td>
-                                    <td>2023-10-03 09:10</td>
-                                    <td>كاميرا ويب</td>
-                                    <td>دخول</td>
-                                    <td>15</td>
-                                    <td>سارة عبدالله</td>
-                                    <td><span class="status-badge status-active">مكتمل</span></td>
-                                    <td>
-                                        <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="inventoryList">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- باقي الأقسام (سجل الحركات، التقارير، العملاء، الإعدادات) -->
+            <!-- قسم سجل الحركات -->
             <div class="section-content" id="transactions">
                 <div class="content-section">
                     <div class="section-header">
                         <h2 class="section-title"><i class="fas fa-history"></i> سجل الحركات</h2>
                     </div>
-                    <p>هنا سيتم عرض سجل كامل لجميع الحركات في النظام.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم الحركة</th>
+                                    <th>التاريخ</th>
+                                    <th>المنتج</th>
+                                    <th>النوع</th>
+                                    <th>الكمية</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsList">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
+            <!-- قسم التقارير -->
             <div class="section-content" id="reports">
                 <div class="content-section">
                     <div class="section-header">
                         <h2 class="section-title"><i class="fas fa-chart-bar"></i> التقارير</h2>
                     </div>
-                    <p>هنا سيتم عرض التقارير والإحصائيات المختلفة.</p>
-                </div>
-            </div>
-
-            <div class="section-content" id="clients">
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title"><i class="fas fa-users"></i> العملاء</h2>
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalIn">0</h3>
+                                <p>إجمالي الدخل</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalOut">0</h3>
+                                <p>إجمالي الصرف</p>
+                            </div>
+                        </div>
                     </div>
-                    <p>هنا سيتم إدارة بيانات العملاء.</p>
+                    <div class="content-section">
+                        <h3 class="section-title"><i class="fas fa-list"></i> تقرير الحركات</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الشهر</th>
+                                        <th>عدد الحركات</th>
+                                        <th>إجمالي الدخل</th>
+                                        <th>إجمالي الصرف</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsData">
+                                    <!-- سيتم ملؤها بواسطة JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- قسم الإعدادات -->
             <div class="section-content" id="settings">
                 <div class="content-section">
                     <div class="section-header">
                         <h2 class="section-title"><i class="fas fa-cog"></i> الإعدادات</h2>
                     </div>
-                    <p>هنا سيتم عرض إعدادات النظام.</p>
+                    <div class="form-group">
+                        <label>حد التنبيه للمخزون المنخفض</label>
+                        <input type="number" class="form-control" id="alertThreshold" value="5">
+                        <small>سيتم إشعارك عندما تكون كمية المنتج أقل من هذا العدد</small>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success" id="saveSettings">حفظ الإعدادات</button>
+                        <button class="btn btn-danger" id="resetData">مسح جميع البيانات</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -979,11 +796,6 @@
                     <label for="transactionProduct">المنتج</label>
                     <select class="form-control" id="transactionProduct">
                         <option value="">اختر المنتج</option>
-                        <option value="1">شاشة كمبيوتر 24 بوصة</option>
-                        <option value="2">لوحة مفاتيح</option>
-                        <option value="3">ماوس لاسلكي</option>
-                        <option value="4">سماعات رأس</option>
-                        <option value="5">كاميرا ويب</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -995,22 +807,60 @@
                     <textarea class="form-control" id="transactionNotes" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-success" style="width: 100%;">حفظ الحركة</button>
+                    <button class="btn btn-success" id="saveTransaction" style="width: 100%;">حفظ الحركة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج إضافة منتج جديد -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-plus"></i> إضافة منتج جديد</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="productName">اسم المنتج</label>
+                    <input type="text" class="form-control" id="productName">
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">الفئة</label>
+                    <input type="text" class="form-control" id="productCategory">
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">السعر</label>
+                    <input type="number" class="form-control" id="productPrice" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="productQuantity">الكمية الأولية</label>
+                    <input type="number" class="form-control" id="productQuantity" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" id="saveProduct" style="width: 100%;">حفظ المنتج</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // كود JavaScript للتحكم في التنقل بين الأقسام
+        // كود JavaScript للتحكم في التخزين والواجهة
         document.addEventListener('DOMContentLoaded', function() {
             // عناصر DOM
             const menuLinks = document.querySelectorAll('.sidebar-menu a');
             const sectionContents = document.querySelectorAll('.section-content');
             const pageTitle = document.querySelector('.page-title');
             const transactionModal = document.getElementById('transactionModal');
+            const productModal = document.getElementById('productModal');
             const showTransactionModalBtn = document.getElementById('showTransactionModal');
-            const closeModalBtn = document.querySelector('.close-modal');
+            const showProductModalBtn = document.getElementById('showProductModal');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            // بيانات التخزين
+            let products = JSON.parse(localStorage.getItem('inventory_products')) || [];
+            let transactions = JSON.parse(localStorage.getItem('inventory_transactions')) || [];
+            let settings = JSON.parse(localStorage.getItem('inventory_settings')) || { alertThreshold: 5 };
             
             // بيانات العناوين للأقسام
             const sectionTitles = {
@@ -1019,9 +869,314 @@
                 'inventory': { icon: 'fa-exchange-alt', title: 'حركة المستودع' },
                 'transactions': { icon: 'fa-history', title: 'سجل الحركات' },
                 'reports': { icon: 'fa-chart-bar', title: 'التقارير' },
-                'clients': { icon: 'fa-users', title: 'العملاء' },
                 'settings': { icon: 'fa-cog', title: 'الإعدادات' }
             };
+            
+            // تهيئة التطبيق
+            function initApp() {
+                updateDashboard();
+                updateProductsList();
+                updateTransactionsList();
+                updateInventoryList();
+                updateReports();
+                loadProductOptions();
+                loadSettings();
+            }
+            
+            // تحديث لوحة التحكم
+            function updateDashboard() {
+                // الإحصائيات
+                document.getElementById('totalProducts').textContent = products.length;
+                
+                const totalQuantity = products.reduce((sum, product) => sum + product.quantity, 0);
+                document.getElementById('totalQuantity').textContent = totalQuantity;
+                
+                const lowStockCount = products.filter(p => p.quantity <= settings.alertThreshold).length;
+                document.getElementById('lowStockCount').textContent = lowStockCount;
+                
+                const today = new Date().toLocaleDateString();
+                const todayTransactions = transactions.filter(t => new Date(t.date).toLocaleDateString() === today).length;
+                document.getElementById('todayTransactions').textContent = todayTransactions;
+                
+                // الحركات الحديثة
+                const recentTransactions = transactions.slice(-5).reverse();
+                const recentTransactionsList = document.getElementById('recentTransactions');
+                recentTransactionsList.innerHTML = '';
+                
+                recentTransactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>#${transaction.id}</td>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.productName}</td>
+                        <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
+                        <td>${transaction.quantity}</td>
+                        <td><span class="status-badge status-active">مكتمل</span></td>
+                        <td>
+                            <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                        </td>
+                    `;
+                    recentTransactionsList.appendChild(row);
+                });
+                
+                // المنتجات الأكثر حركة
+                const topProductsList = document.getElementById('topProducts');
+                topProductsList.innerHTML = '';
+                
+                // هنا يمكنك إضافة منطق لعرض المنتجات الأكثر حركة
+                products.slice(0, 5).forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>${product.price} ر.س</td>
+                        <td>${product.quantity}</td>
+                        <td>0</td>
+                        <td><span class="status-badge ${product.quantity <= settings.alertThreshold ? 'status-inactive' : 'status-active'}">${product.quantity <= settings.alertThreshold ? 'منخفض' : 'متوفر'}</span></td>
+                    `;
+                    topProductsList.appendChild(row);
+                });
+                
+                // تنبيهات المخزون
+                const stockAlerts = document.getElementById('stockAlerts');
+                stockAlerts.innerHTML = '';
+                
+                const lowStockProducts = products.filter(p => p.quantity <= settings.alertThreshold);
+                if (lowStockProducts.length === 0) {
+                    stockAlerts.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> لا توجد تنبيهات</div>';
+                } else {
+                    lowStockProducts.forEach(product => {
+                        const alert = document.createElement('div');
+                        alert.className = 'alert alert-danger';
+                        alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${product.name} - الكمية منخفضة (${product.quantity})`;
+                        stockAlerts.appendChild(alert);
+                    });
+                }
+            }
+            
+            // تحديث قائمة المنتجات
+            function updateProductsList() {
+                const productsList = document.getElementById('productsList');
+                productsList.innerHTML = '';
+                
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>${product.category || 'بدون فئة'}</td>
+                        <td>${product.price} ر.س</td>
+                        <td>${product.quantity}</td>
+                        <td><span class="status-badge ${product.quantity <= settings.alertThreshold ? 'status-inactive' : 'status-active'}">${product.quantity <= settings.alertThreshold ? 'منخفض' : 'متوفر'}</span></td>
+                        <td>
+                            <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" data-id="${product.id}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    productsList.appendChild(row);
+                });
+                
+                // إضافة مستمعي الأحداث لأزرار الحذف
+                document.querySelectorAll('.btn-danger').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const productId = this.getAttribute('data-id');
+                        deleteProduct(productId);
+                    });
+                });
+            }
+            
+            // تحديث قائمة حركات المستودع
+            function updateInventoryList() {
+                const inventoryList = document.getElementById('inventoryList');
+                inventoryList.innerHTML = '';
+                
+                transactions.slice().reverse().forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>#${transaction.id}</td>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.productName}</td>
+                        <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
+                        <td>${transaction.quantity}</td>
+                        <td><span class="status-badge status-active">مكتمل</span></td>
+                        <td>
+                            <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                        </td>
+                    `;
+                    inventoryList.appendChild(row);
+                });
+            }
+            
+            // تحديث سجل الحركات
+            function updateTransactionsList() {
+                const transactionsList = document.getElementById('transactionsList');
+                transactionsList.innerHTML = '';
+                
+                transactions.slice().reverse().forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>#${transaction.id}</td>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.productName}</td>
+                        <td>${transaction.type === 'in' ? 'دخول' : 'خروج'}</td>
+                        <td>${transaction.quantity}</td>
+                        <td><span class="status-badge status-active">مكتمل</span></td>
+                    `;
+                    transactionsList.appendChild(row);
+                });
+            }
+            
+            // تحديث التقارير
+            function updateReports() {
+                const totalIn = transactions
+                    .filter(t => t.type === 'in')
+                    .reduce((sum, t) => sum + t.quantity, 0);
+                
+                const totalOut = transactions
+                    .filter(t => t.type === 'out')
+                    .reduce((sum, t) => sum + t.quantity, 0);
+                
+                document.getElementById('totalIn').textContent = totalIn;
+                document.getElementById('totalOut').textContent = totalOut;
+                
+                // هنا يمكنك إضافة المزيد من منطق التقارير
+            }
+            
+            // تحميل خيارات المنتجات في النماذج
+            function loadProductOptions() {
+                const productSelect = document.getElementById('transactionProduct');
+                productSelect.innerHTML = '<option value="">اختر المنتج</option>';
+                
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                });
+            }
+            
+            // تحميل الإعدادات
+            function loadSettings() {
+                document.getElementById('alertThreshold').value = settings.alertThreshold;
+            }
+            
+            // حفظ الإعدادات
+            document.getElementById('saveSettings').addEventListener('click', function() {
+                settings.alertThreshold = parseInt(document.getElementById('alertThreshold').value);
+                localStorage.setItem('inventory_settings', JSON.stringify(settings));
+                alert('تم حفظ الإعدادات بنجاح');
+                updateDashboard();
+            });
+            
+            // مسح جميع البيانات
+            document.getElementById('resetData').addEventListener('click', function() {
+                if (confirm('هل أنت متأكد من أنك تريد مسح جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                    localStorage.removeItem('inventory_products');
+                    localStorage.removeItem('inventory_transactions');
+                    products = [];
+                    transactions = [];
+                    initApp();
+                    alert('تم مسح جميع البيانات');
+                }
+            });
+            
+            // حفظ منتج جديد
+            document.getElementById('saveProduct').addEventListener('click', function() {
+                const name = document.getElementById('productName').value;
+                const category = document.getElementById('productCategory').value;
+                const price = parseFloat(document.getElementById('productPrice').value);
+                const quantity = parseInt(document.getElementById('productQuantity').value);
+                
+                if (!name || !price) {
+                    alert('يرجى ملء جميع الحقول المطلوبة');
+                    return;
+                }
+                
+                const newProduct = {
+                    id: Date.now(),
+                    name,
+                    category,
+                    price,
+                    quantity
+                };
+                
+                products.push(newProduct);
+                localStorage.setItem('inventory_products', JSON.stringify(products));
+                
+                productModal.style.display = 'none';
+                alert('تم إضافة المنتج بنجاح');
+                
+                updateDashboard();
+                updateProductsList();
+                loadProductOptions();
+            });
+            
+            // حفظ حركة جديدة
+            document.getElementById('saveTransaction').addEventListener('click', function() {
+                const type = document.getElementById('transactionType').value;
+                const productId = document.getElementById('transactionProduct').value;
+                const quantity = parseInt(document.getElementById('transactionQuantity').value);
+                const notes = document.getElementById('transactionNotes').value;
+                
+                if (!productId || !quantity) {
+                    alert('يرجى ملء جميع الحقول المطلوبة');
+                    return;
+                }
+                
+                const product = products.find(p => p.id == productId);
+                if (!product) {
+                    alert('المنتج المحدد غير موجود');
+                    return;
+                }
+                
+                if (type === 'out' && product.quantity < quantity) {
+                    alert('الكمية غير كافية في المخزون');
+                    return;
+                }
+                
+                // تحديث كمية المنتج
+                if (type === 'in') {
+                    product.quantity += quantity;
+                } else {
+                    product.quantity -= quantity;
+                }
+                
+                // إضافة الحركة
+                const newTransaction = {
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    productId: product.id,
+                    productName: product.name,
+                    type,
+                    quantity,
+                    notes
+                };
+                
+                transactions.push(newTransaction);
+                localStorage.setItem('inventory_products', JSON.stringify(products));
+                localStorage.setItem('inventory_transactions', JSON.stringify(transactions));
+                
+                transactionModal.style.display = 'none';
+                alert('تم إضافة الحركة بنجاح');
+                
+                updateDashboard();
+                updateProductsList();
+                updateInventoryList();
+                updateTransactionsList();
+                updateReports();
+            });
+            
+            // حذف منتج
+            function deleteProduct(productId) {
+                if (confirm('هل أنت متأكد من أنك تريد حذف هذا المنتج؟')) {
+                    products = products.filter(p => p.id != productId);
+                    localStorage.setItem('inventory_products', JSON.stringify(products));
+                    
+                    alert('تم حذف المنتج بنجاح');
+                    updateDashboard();
+                    updateProductsList();
+                    loadProductOptions();
+                }
+            }
             
             // تغيير القسم النشط عند النقر على رابط القائمة
             menuLinks.forEach(link => {
@@ -1051,36 +1206,35 @@
                 });
             });
             
-            // فتح نموذج إضافة حركة جديدة
+            // فتح النماذج
             showTransactionModalBtn.addEventListener('click', function() {
                 transactionModal.style.display = 'flex';
             });
             
-            // إغلاق النموذج
-            closeModalBtn.addEventListener('click', function() {
-                transactionModal.style.display = 'none';
+            showProductModalBtn.addEventListener('click', function() {
+                productModal.style.display = 'flex';
             });
             
-            // إغلاق النموذج عند النقر خارج المحتوى
+            // إغلاق النماذج
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    transactionModal.style.display = 'none';
+                    productModal.style.display = 'none';
+                });
+            });
+            
+            // إغلاق النماذج عند النقر خارج المحتوى
             window.addEventListener('click', function(e) {
                 if (e.target === transactionModal) {
                     transactionModal.style.display = 'none';
                 }
+                if (e.target === productModal) {
+                    productModal.style.display = 'none';
+                }
             });
             
-            // إضافة تأثيرات للبطاقات
-            const statCards = document.querySelectorAll('.stat-card');
-            statCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'translateY(-5px)';
-                    card.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'translateY(0)';
-                    card.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
-                });
-            });
+            // تهيئة التطبيق
+            initApp();
         });
     </script>
 </body>
